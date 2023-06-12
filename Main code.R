@@ -12,10 +12,29 @@ View(data)
 # calculer: trouver valeur au delà de laquelle il faut tout expropier pour combler pgap avec transferts internes
 # autre indicateurs: au delà de 2,15$ impôt linéaire; quel tx appliquer pour combler pvgap et regarder tx linéaire de 2,15`$, 6,95$, 13$`
 
-install.packages ("tidyverse")
+
 library(tidyverse)
 data <- read.csv("Povcalnet 2017.csv")
 temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
+View(data)
+
+data_pivot <- data %>%
+  pivot_wider(names_from = percentile, values_from = avg_welfare)
+
+str(data_pivot)
+
+data_pivot <- data %>%
+  filter(!is.na(avg_welfare)) %>%
+  group_by(country_code, percentile) %>%
+  summarize(mean_avg_welfare = mean(avg_welfare))
+str(data_pivot)
+data_wide <- data_pivot %>%
+  pivot_wider(names_from = percentile, values_from = mean_avg_welfare)
+
+str(data_wide)
+data_pivot %>%
+  pivot_wider(names_from = percentile, values_from = mean_avg_welfare, values_fill = 0) %>%
+  head()
