@@ -10,3 +10,5 @@ View(data)
 # faire une Hi=g entre 2030 va être la même pour chaque personne dans chaque pays
 # calculer: trouver valeur au delà de laquelle il faut tout expropier pour combler pgap avec transferts internes
 # autre indicateurs: au delà de 2,15$ impôt linéaire; quel tx appliquer pour combler pvgap et regarder tx linéaire de 2,15`$, 6,95$, 13$`
+
+#coucou
