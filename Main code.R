@@ -1,4 +1,4 @@
-ibrary(gpinter)
+library(gpinter)
 data<-read.csv("Povcalnet 2017.csv")
 View(data)
 
