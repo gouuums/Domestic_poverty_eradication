@@ -38,3 +38,7 @@ str(data_wide)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_avg_welfare, values_fill = 0) %>%
   head()
+view(data_wide)
+
+chiffresmoyenne <- names(data_wide)[-1]
+moyenne <- rowMeans(data_wide[,chiffresmoyenne])
