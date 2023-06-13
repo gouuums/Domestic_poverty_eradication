@@ -81,6 +81,8 @@ View(data_quantile)
 lignes_a_supprimer <- data$Colonne %in% tableau1 & !data$Colonne %in% tableau2
 
 #Tableau du welfare type par percentile: Pb car pivot-wider ne fonctionne pas pour des mots
+data_pivot <- spread(data, key = welfare_type, value = welfare_type)
+View(data_pivot)
 
 #Moyenne: à refaire comme on n'utilise plus xata_wide
 #chiffresmoyenne <- names(data_wide)[-1]
@@ -114,3 +116,9 @@ welfshare <- paste0("welfshare", 1:(ncol(data_welfshare)-1))
 colnames(data_welfshare)[-1] <- welfshare
 colnames(data_welfshare)[1] <- country_code
 View(data_welfshare)
+
+Merge_1 <- merge(data_avgwelf, data_pop_share)
+View(Merge_1)
+Merge_2 <- merge(Merge_1, data_welfshare)
+View(Merge_2)
+Merge_3 <- merge(Merge_2, data_quantile)
