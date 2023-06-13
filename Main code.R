@@ -64,4 +64,5 @@ data_pivot %>%
   head()
 View(data_avgwelf)
 
-
+merge(data_avgwelf,Croissance_pays)
+View(merge(data_avgwelf,Croissance_pays))
