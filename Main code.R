@@ -92,4 +92,5 @@ print(Croissance_pays)
 View(Croissance_pays)
 
 
-
+merge(data_avgwelf,Croissance_pays)
+View(merge(data_avgwelf,Croissance_pays))
