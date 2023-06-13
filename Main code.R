@@ -42,3 +42,26 @@ view(data_wide)
 
 chiffresmoyenne <- names(data_wide)[-1]
 moyenne <- rowMeans(data_wide[,chiffresmoyenne])
+
+print(Croissance_pays[-c(1), ])
+
+colnames(Croissance_pays)[1:2:3:4:5:6:7:8:9] <- c("country_code","Growth rate 2014", "Growth rate 2015","Growth rate 2016", "Growth rate 2017", "Growth rate 2018","Growth rate 2019","Growth rate 2020","Growth rate 2021")
+print("Renamed Croissance_pays : ")
+print(Croissance_pays)
+View(Croissance_pays)
+
+data_pivot <- data %>%
+  filter(!is.na(avg_welfare)) %>%
+  group_by(country_code, percentile) %>%
+  summarize(mean_avg_welfare = mean(avg_welfare))
+str(data_pivot)
+data_avgwelf <- data_pivot %>%
+  pivot_wider(names_from = percentile, values_from = mean_avg_welfare)
+
+str(data_avgwelf)
+data_pivot %>%
+  pivot_wider(names_from = percentile, values_from = mean_avg_welfare, values_fill = 0) %>%
+  head()
+View(data_avgwelf)
+
+
