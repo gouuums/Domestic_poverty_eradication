@@ -130,5 +130,7 @@ View(Merge_5)
 #chiffresmoyenne <- names(data_wide)[-1]
 #moyenne <- rowMeans(data_wide[,chiffresmoyenne])
 
+                
+
 
 
