@@ -84,7 +84,7 @@ lignes_a_supprimer <- data$Colonne %in% tableau1 & !data$Colonne %in% tableau2
 data_pivot <- spread(data, key = welfare_type, value = welfare_type)
 View(data_pivot)
 
-#Moyenne: à refaire comme on n'utilise plus xata_wide
+#Moyenne: à refaire comme on n'utilise plus data_wide
 #chiffresmoyenne <- names(data_wide)[-1]
 #moyenne <- rowMeans(data_wide[,chiffresmoyenne])
 
@@ -119,6 +119,15 @@ View(data_welfshare)
 
 Merge_1 <- merge(data_avgwelf, data_pop_share)
 View(Merge_1)
+
 Merge_2 <- merge(Merge_1, data_welfshare)
 View(Merge_2)
+
 Merge_3 <- merge(Merge_2, data_quantile)
+View(Merge_3)
+
+Merge_4 <- merge(Merge_3, Croissance_pays)
+View(Merge_4)
+
+
+
