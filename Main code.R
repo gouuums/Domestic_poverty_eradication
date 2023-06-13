@@ -19,7 +19,6 @@ temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
-View(data)
 
 #Tableau de l'average welfare par percentile
 data_pivot <- data %>%
@@ -33,7 +32,6 @@ str(data_avgwelf)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_avg_welfare, values_fill = 0) %>%
   head()
-View(data_avgwelf)
 
 #Tableau du welfare share par percentile
 data_pivot <- data %>%
@@ -47,7 +45,6 @@ str(data_welfshare)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_welfare_share, values_fill = 0) %>%
   head()
-View(data_welfshare)
 
 #Tableau de la pop share par percentile
 data_pivot <- data %>%
@@ -61,7 +58,6 @@ str(data_pop_share)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_pop_share, values_fill = 0) %>%
   head()
-View(data_pop_share)
 
 #Tableau du quantile par percentile
 data_pivot <- data %>%
@@ -75,59 +71,64 @@ str(data_quantile)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_quantile, values_fill = 0) %>%
   head()
-View(data_quantile)
 
-#En cours de travail
-lignes_a_supprimer <- data$Colonne %in% tableau1 & !data$Colonne %in% tableau2
+#Tableau des types de welfare
+data_pivot <- data %>%
+  filter(!is.na(welfare_type)) %>%
+  group_by(country_code, percentile) %>%
+  summarize(mean_welfare_type = welfare_type)
+str(data_pivot)
+data_welfare_type <- data_pivot %>%
+  pivot_wider(names_from = percentile, values_from = mean_welfare_type)
+str(data_welfare_type)
+data_pivot %>%
+  pivot_wider(names_from = percentile, values_from = mean_welfare_type, values_fill = 0) %>%
+  head()
 
-#Tableau du welfare type par percentile: Pb car pivot-wider ne fonctionne pas pour des mots
-data_pivot <- spread(data, key = welfare_type, value = welfare_type)
-View(data_pivot)
-
-#Moyenne: à refaire comme on n'utilise plus data_wide
-#chiffresmoyenne <- names(data_wide)[-1]
-#moyenne <- rowMeans(data_wide[,chiffresmoyenne])
-
+#Croissance de 2014 à 2021
 colnames(Croissance_pays)[1:2:3:4:5:6:7:8:9] <- c("country_code","Growth rate 2014", "Growth rate 2015","Growth rate 2016", "Growth rate 2017", "Growth rate 2018","Growth rate 2019","Growth rate 2020","Growth rate 2021")
 print("Renamed Croissance_pays : ")
 print(Croissance_pays)
-View(Croissance_pays)
+
+#Reglages sur les noms des colonnes des percentiles
+country_code <- colnames(data_welfare_type)[1]
+welftype <- paste0("welftype", 1:(ncol(data_welfare_type)-1))
+colnames(data_welfare_type)[-1] <- welftype
+colnames(data_welfare_type)[1] <- country_code
 
 country_code <- colnames(data_avgwelf)[1]
 avgwelf <- paste0("avgwelf", 1:(ncol(data_avgwelf)-1))
 colnames(data_avgwelf)[-1] <- avgwelf
 colnames(data_avgwelf)[1] <- country_code
-View(data_avgwelf)
 
 country_code <- colnames(data_pop_share)[1]
 popshare <- paste0("popshare", 1:(ncol(data_pop_share)-1))
 colnames(data_pop_share)[-1] <- popshare
 colnames(data_pop_share)[1] <- country_code
-View(data_pop_share)
 
 country_code <- colnames(data_quantile)[1]
 quant <- paste0("quant", 1:(ncol(data_quantile)-1))
 colnames(data_quantile)[-1] <- quant
 colnames(data_quantile)[1] <- country_code
-View(data_quantile)
 
 country_code <- colnames(data_welfshare)[1]
 welfshare <- paste0("welfshare", 1:(ncol(data_welfshare)-1))
 colnames(data_welfshare)[-1] <- welfshare
 colnames(data_welfshare)[1] <- country_code
-View(data_welfshare)
 
-Merge_1 <- merge(data_avgwelf, data_pop_share)
-View(Merge_1)
+#Grand tableau
+Merge_1 <- merge(data_welfare_type, data_avgwelf)
+Merge_2 <- merge(Merge_1,data_pop_share)
+Merge_3 <- merge(Merge_2, data_welfshare)
+Merge_4 <- merge(Merge_3,data_quantile)
+Merge_5 <- merge(Merge_4, Croissance_pays)
+View(Merge_5)
 
-Merge_2 <- merge(Merge_1, data_welfshare)
-View(Merge_2)
+#En cours de travail
 
-Merge_3 <- merge(Merge_2, data_quantile)
-View(Merge_3)
-
-Merge_4 <- merge(Merge_3, Croissance_pays)
-View(Merge_4)
+#Moyenne: à refaire comme on n'utilise plus data_wide
+#chiffresmoyenne <- names(data_wide)[-1]
+#moyenne <- rowMeans(data_wide[,chiffresmoyenne])
 
 
 
