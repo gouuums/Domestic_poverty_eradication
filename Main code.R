@@ -5,7 +5,7 @@ View(data)
 #CONSIGNES
 # Pour tous pays récupérer la dernière année des donnée sdispo 
 # estimer taux crissance  entre cette année kla et 2030 (cf tx croissance observée sur BM en $ 2017 PPP)
-# imputer une croissance entre maintennat et 2030 (soit trouver une institiution tq BM ou GMS qui le fait soit prendre la croissance observée dans les 5 dernières années observ&es hors covid pour avoir un tx de recalibrage avec lequel on va multiplier le revenu total du pays)
+# imputer un croissance entre maintennat et 2030 (soit trouver une institiution tq BM ou GMS qui le fait soit prendre la croissance observée dans les 5 dernières années observ&es hors covid pour avoir un tx de recalibrage avec lequel on va multiplier le revenu total du pays)
 # reproduire le travail du papier
 # regarder le poverty gap à 2,15$ lvl indiv puis pays l'exprimer en $/personne (poverty  gap moyen) 
 # faire une Hi=g entre 2030 va être la même pour chaque personne dans chaque pays
@@ -91,6 +91,26 @@ print("Renamed Croissance_pays : ")
 print(Croissance_pays)
 View(Croissance_pays)
 
+country_code <- colnames(data_avgwelf)[1]
+avgwelf <- paste0("avgwelf", 1:(ncol(data_avgwelf)-1))
+colnames(data_avgwelf)[-1] <- avgwelf
+colnames(data_avgwelf)[1] <- country_code
+View(data_avgwelf)
 
-merge(data_avgwelf,Croissance_pays)
-View(merge(data_avgwelf,Croissance_pays))
+country_code <- colnames(data_pop_share)[1]
+popshare <- paste0("popshare", 1:(ncol(data_pop_share)-1))
+colnames(data_pop_share)[-1] <- popshare
+colnames(data_pop_share)[1] <- country_code
+View(data_pop_share)
+
+country_code <- colnames(data_quantile)[1]
+quant <- paste0("quant", 1:(ncol(data_quantile)-1))
+colnames(data_quantile)[-1] <- quant
+colnames(data_quantile)[1] <- country_code
+View(data_quantile)
+
+country_code <- colnames(data_welfshare)[1]
+welfshare <- paste0("welfshare", 1:(ncol(data_welfshare)-1))
+colnames(data_welfshare)[-1] <- welfshare
+colnames(data_welfshare)[1] <- country_code
+View(data_welfshare)
