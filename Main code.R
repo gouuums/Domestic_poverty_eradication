@@ -139,6 +139,27 @@ View(Pov_gap)
 
 #En cours de travail
 
+# Croissance
+
+colnames(Croissance_pays)[8] <- c("z")
+colnames(Croissance_pays)[7] <- c("Growth rate 2019 ")
+
+subset(Croissance_pays, select=-c(z))
+View(subset(Croissance_pays, select=-c(z)))
+
+Croissance_Pays2 <- subset(Croissance_pays, select=-c(z))
+View(Croissance_Pays2)
+
+subset(Croissance_Pays2, select=-c(country_code))
+View(subset(Croissance_Pays2, select=-c(country_code)))
+
+
+moyenne <-rowMeans(subset(Croissance_Pays2, select=-c(country_code)))
+Moyenne_croissance <- data.frame(RowMean = moyenne)
+View(Moyenne_croissance)
+
+Croissance_pays <- cbind(Croissance_pays, Moyenne_croissance$RowMean)
+View(Croissance_pays)
 
                 
 
