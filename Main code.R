@@ -124,11 +124,21 @@ Merge_4 <- merge(Merge_3,data_quantile)
 Merge_5 <- merge(Merge_4, Croissance_pays)
 View(Merge_5)
 
+#Calcul du Poverty Gap individuel et national
+Seuil <- 2.15
+
+Pov_gap <- data_avgwelf
+Pov_gap[, -1] <- apply(data_avgwelf[, -1], 2, function(x) ifelse(Seuil-x<0, 0, Seuil-x))
+country_code <- colnames(data_avgwelf)[1]
+Pov_gap_of_p <- paste0("Pov_gap_of_p", 1:(ncol(data_avgwelf)-1))
+colnames(Pov_gap)[-1] <- Pov_gap_of_p
+colnames(Pov_gap)[1] <- country_code
+chiffresmoyenne <- names(Pov_gap)[-1]
+Pov_gap$moyenne_nat <- rowMeans(Pov_gap[,chiffresmoyenne])
+View(Pov_gap)
+
 #En cours de travail
 
-#Moyenne: à refaire comme on n'utilise plus data_wide
-#chiffresmoyenne <- names(data_wide)[-1]
-#moyenne <- rowMeans(data_wide[,chiffresmoyenne])
 
                 
 
