@@ -149,18 +149,12 @@ View(Croissance_Pays3)
 colnames(Croissance_Pays3)[1] <- country_code
 Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
 colnames(Merge_6)[9] <- c("Moyenne croissance")
-Croissance_pays_final <- Merge_6[,c("country_code","Moyenne croissance")]
+Croissance_pays_final <- Merge_6[,c("country_code","2021","Moyenne croissance")]
 View(Croissance_pays_final)
 
 
-
-
-
-colnames(Moyenne_croissance)[1] <- c("x")
-View(Moyenne_croissance)
-
 # Calcul projections de Croissance
-
+colnames(Moyenne_croissance)[1] <- c("x")
 Croissance_Pays2$Growth_projections_2022 <- NA
 for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2022[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^9*(Croissance_Pays2$`Growth rate 2021`[i])
 View(Croissance_Pays2)
@@ -197,6 +191,44 @@ Croissance_Pays2$Growth_projections_2030 <- NA
 for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2030[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^2*(Croissance_Pays2$`Growth_projections_2029`[i])
 View(Croissance_Pays2)
 
+#Version croissance final
+
+colnames(Moyenne_croissance)[1] <- c("x")
+Croissance_pays_final$Growth_projections_2022 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2022[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^9*(Croissance_pays_final$`2021`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2023 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2023[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^8*(Croissance_pays_final$`Growth_projections_2022`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2024 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2024[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^7*(Croissance_pays_final$`Growth_projections_2023`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2025 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2025[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^6*(Croissance_pays_final$`Growth_projections_2024`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2026 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2026[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^5*(Croissance_pays_final$`Growth_projections_2025`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2027 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2027[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^4*(Croissance_pays_final$`Growth_projections_2026`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2028 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2028[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^3*(Croissance_pays_final$`Growth_projections_2027`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2029 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2029[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^2*(Croissance_pays_final$`Growth_projections_2028`[i])
+View(Croissance_pays_final)
+
+Croissance_pays_final$Growth_projections_2030 <- NA
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2030[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^2*(Croissance_pays_final$`Growth_projections_2029`[i])
+View(Croissance_pays_final)
 
 
 
