@@ -122,7 +122,6 @@ Merge_2 <- merge(Merge_1,data_pop_share)
 Merge_3 <- merge(Merge_2, data_welfshare)
 Merge_4 <- merge(Merge_3,data_quantile)
 Merge_5 <- merge(Merge_4, Croissance_pays)
-View(Merge_5)
 
 #Calcul du Poverty Gap individuel et national
 Seuil <- 2.15
@@ -144,54 +143,13 @@ Croissance_Pays2 <- subset(Croissance_pays, select=-c(z))
 moyenne <- rowMeans(Croissance_Pays2[, -1], na.rm = TRUE)
 Moyenne_croissance <- data.frame(RowMean = moyenne)
 Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
-View(Croissance_Pays3)
 
 colnames(Croissance_Pays3)[1] <- country_code
 Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
 colnames(Merge_6)[9] <- c("Moyenne croissance")
 Croissance_pays_final <- Merge_6[,c("country_code","2021","Moyenne croissance")]
-View(Croissance_pays_final)
-
 
 # Calcul projections de Croissance
-colnames(Moyenne_croissance)[1] <- c("x")
-Croissance_Pays2$Growth_projections_2022 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2022[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^9*(Croissance_Pays2$`Growth rate 2021`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2023 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2023[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^8*(Croissance_Pays2$`Growth_projections_2022`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2024 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2024[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^7*(Croissance_Pays2$`Growth_projections_2023`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2025 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2025[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^6*(Croissance_Pays2$`Growth_projections_2024`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2026 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2026[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^5*(Croissance_Pays2$`Growth_projections_2025`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2027 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2027[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^4*(Croissance_Pays2$`Growth_projections_2026`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2028 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2028[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^3*(Croissance_Pays2$`Growth_projections_2027`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2029 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2029[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^2*(Croissance_Pays2$`Growth_projections_2028`[i])
-View(Croissance_Pays2)
-
-Croissance_Pays2$Growth_projections_2030 <- NA
-for(i in 1:length(Croissance_Pays2$`Moyenne_croissance$RowMean`)) Croissance_Pays2$Growth_projections_2030[i] <- ((Croissance_Pays2$`Moyenne_croissance$RowMean`[i]/100)+1)^2*(Croissance_Pays2$`Growth_projections_2029`[i])
-View(Croissance_Pays2)
-
-#Version croissance final
 
 colnames(Moyenne_croissance)[1] <- c("x")
 Croissance_pays_final$Growth_projections_2022 <- NA
@@ -219,9 +177,14 @@ Croissance_pays_final$Growth_projections_2029 <- NA
 for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2029[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^2*(Croissance_pays_final$`Growth_projections_2028`[i])
 
 Croissance_pays_final$Growth_projections_2030 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2030[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^2*(Croissance_pays_final$`Growth_projections_2029`[i])
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2030[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^1*(Croissance_pays_final$`Growth_projections_2029`[i])
 
+colnames(Croissance_pays_final)[2] <- c("SUPP")
+Croissance_pays_final <- subset(Croissance_pays_final, select=-c(SUPP))
 View(Croissance_pays_final)
+Merge_7 <- merge(Merge_5, Croissance_pays_final)
+View(Merge_7)
+
 
 
 
