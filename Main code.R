@@ -134,8 +134,6 @@ colnames(Pov_gap)[1] <- country_code
 chiffresmoyenne <- names(Pov_gap)[-1]
 Pov_gap$moyenne_nat <- rowMeans(Pov_gap[,chiffresmoyenne])
 
-#En cours de travail
-
 # Croissance Moyenne
 colnames(Croissance_pays)[8] <- c("z")
 colnames(Croissance_pays)[7] <- c("Growth rate 2019 ")
@@ -179,11 +177,15 @@ for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_f
 Croissance_pays_final$Growth_projections_2030 <- NA
 for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2030[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^1*(Croissance_pays_final$`Growth_projections_2029`[i])
 
+#Merge croissance et pov gap dans notre grand tableau
 colnames(Croissance_pays_final)[2] <- c("SUPP")
 Croissance_pays_final <- subset(Croissance_pays_final, select=-c(SUPP))
-View(Croissance_pays_final)
 Merge_7 <- merge(Merge_5, Croissance_pays_final)
-View(Merge_7)
+Merge_8 <- merge(Merge_7, Pov_gap)
+View(Merge_8)
+
+#En cours de travail
+
 
 
 
