@@ -3,12 +3,12 @@ data<-read.csv("Povcalnet 2017.csv")
 View(data)
 
 #CONSIGNES
-# Pour tous pays récupérer la dernière année des donnée sdispo 
+# Pour tous pays récupérer la dernière année des donnéeSdispo 
 # estimer taux crissance  entre cette année kla et 2030 (cf tx croissance observée sur BM en $ 2017 PPP)
 # imputer un croissance entre maintennat et 2030 (soit trouver une institiution tq BM ou GMS qui le fait soit prendre la croissance observée dans les 5 dernières années observ&es hors covid pour avoir un tx de recalibrage avec lequel on va multiplier le revenu total du pays)
 # reproduire le travail du papier
 # regarder le poverty gap à 2,15$ lvl indiv puis pays l'exprimer en $/personne (poverty  gap moyen) 
-# faire une Hi=g entre 2030 va être la même pour chaque personne dans chaque pays
+# faire une Hi=g entre 2030 va être la même pour chaque personne daNs chaque pays
 # calculer: trouver valeur au delà de laquelle il faut tout expropier pour combler pgap avec transferts internes
 # autre indicateurs: au delà de 2,15$ impôt linéaire; quel tx appliquer pour combler pvgap et regarder tx linéaire de 2,15`$, 6,95$, 13$`
 
@@ -143,24 +143,26 @@ View(Pov_gap)
 
 colnames(Croissance_pays)[8] <- c("z")
 colnames(Croissance_pays)[7] <- c("Growth rate 2019 ")
-
 subset(Croissance_pays, select=-c(z))
 View(subset(Croissance_pays, select=-c(z)))
-
 Croissance_Pays2 <- subset(Croissance_pays, select=-c(z))
 View(Croissance_Pays2)
-
 subset(Croissance_Pays2, select=-c(country_code))
 View(subset(Croissance_Pays2, select=-c(country_code)))
-
-
 moyenne <-rowMeans(subset(Croissance_Pays2, select=-c(country_code)))
 Moyenne_croissance <- data.frame(RowMean = moyenne)
 View(Moyenne_croissance)
-
 Croissance_pays <- cbind(Croissance_pays, Moyenne_croissance$RowMean)
 View(Croissance_pays)
 
+
+
+                         
+                                   
+                                    
+                                    
+                       
+         
                 
 
 
