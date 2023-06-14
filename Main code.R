@@ -19,6 +19,8 @@ temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
+library(readxl)
+Croissance_pays <- read_excel("Croissance pays.xls")
 
 #Tableau de l'average welfare par percentile
 data_pivot <- data %>%
@@ -87,8 +89,6 @@ data_pivot %>%
 
 #Croissance de 2014 à 2021
 colnames(Croissance_pays)[1:2:3:4:5:6:7:8:9] <- c("country_code","Growth rate 2014", "Growth rate 2015","Growth rate 2016", "Growth rate 2017", "Growth rate 2018","Growth rate 2019","Growth rate 2020","Growth rate 2021")
-print("Renamed Croissance_pays : ")
-print(Croissance_pays)
 
 #Reglages sur les noms des colonnes des percentiles
 country_code <- colnames(data_welfare_type)[1]
@@ -135,25 +135,26 @@ colnames(Pov_gap)[-1] <- Pov_gap_of_p
 colnames(Pov_gap)[1] <- country_code
 chiffresmoyenne <- names(Pov_gap)[-1]
 Pov_gap$moyenne_nat <- rowMeans(Pov_gap[,chiffresmoyenne])
-View(Pov_gap)
 
 #En cours de travail
 
 # Croissance
-
 colnames(Croissance_pays)[8] <- c("z")
 colnames(Croissance_pays)[7] <- c("Growth rate 2019 ")
-subset(Croissance_pays, select=-c(z))
-View(subset(Croissance_pays, select=-c(z)))
 Croissance_Pays2 <- subset(Croissance_pays, select=-c(z))
-View(Croissance_Pays2)
-subset(Croissance_Pays2, select=-c(country_code))
-View(subset(Croissance_Pays2, select=-c(country_code)))
-moyenne <-rowMeans(subset(Croissance_Pays2, select=-c(country_code)))
+moyenne <- rowMeans(Croissance_Pays2[, -1], na.rm = TRUE)
 Moyenne_croissance <- data.frame(RowMean = moyenne)
-View(Moyenne_croissance)
-Croissance_pays <- cbind(Croissance_pays, Moyenne_croissance$RowMean)
-View(Croissance_pays)
+Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
+View(Croissance_Pays3)
+
+colnames(Croissance_Pays3)[1] <- country_code
+Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
+colnames(Merge_6)[9] <- c("Moyenne croissance")
+Croissance_pays_final <- Merge_6[,c("country_code","Moyenne croissance")]
+View(Croissance_pays_final)
+
+
+
 
 
 
