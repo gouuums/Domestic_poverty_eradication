@@ -1,6 +1,5 @@
 library(gpinter)
 data<-read.csv("Povcalnet 2017.csv")
-View(data)
 
 #CONSIGNES
 # Pour tous pays récupérer la dernière année des donnéeSdispo 
@@ -21,6 +20,8 @@ data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
 library(readxl)
 Croissance_pays <- read_excel("Croissance pays.xls")
+library(readxl)
+PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
 
 #Tableau de l'average welfare par percentile
 data_pivot <- data %>%
@@ -34,6 +35,7 @@ str(data_avgwelf)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_avg_welfare, values_fill = 0) %>%
   head()
+View(data_pivot)
 
 #Tableau du welfare share par percentile
 data_pivot <- data %>%
@@ -186,10 +188,14 @@ View(Merge_8)
 
 #En cours de travail
 
-
-
-
-
+#Tri données PIB/capita
+Merge_9 <- merge(PIB_capita, data_quantile, by="country_code")
+PIB_capita_non_tri <- Merge_9[, 1:33]
+colonne_year_max <- data$country_code[!duplicated(data$country_code)]
+data_year_max <- data[!duplicated(data$country_code), ]
+data_year_max <- data_year_max[,c("country_code","year")]
+PIB_capita_non_tri <- merge(data_year_max,PIB_capita_non_tri)
+PIB_capita_non_tri$year[PIB_capita_non_tri$year == 2020] <- 2019
 
 
 
