@@ -205,51 +205,25 @@ View(Merge_9)
 transformed_PIB_capita_non_tri <- data.frame(
   country_code = PIB_capita_non_tri$country_code,
   focus_year = PIB_capita_non_tri$year,
-  PIB = numeric(length(PIB_capita_non_tri$country_code)))
+  PIB = numeric(length(PIB_capita_non_tri$country_code))
+)
 
-# Complete the new dataset
+# COmplete the new PIB_capita_non_tri
 for (i in 1:nrow(PIB_capita_non_tri)) {
   focus_year <- PIB_capita_non_tri$year[i]
   if (focus_year < 2022) {
     year_column <- paste0("X", focus_year, sep = "")
-    
-    transformed_PIB_capita_non_tri$PIB[i] <- PIB_capita_non_tri[i, which(year_column == colnames(PIB_capita_non_tri))]
+    transformed_PIB_capita_non_tri$PIB[i] <- PIB_capita_non_tri[i, which(year_column == colnames(dataset))]
   }
   else transformed_PIB_capita_non_tri$PIB[i] = NA
 }
 
 # Printing the transformed dataset
 print(transformed_PIB_capita_non_tri)
-
-transformed_dataset <- data.frame(
-  country_code = dataset$country_code,
-  focus_year = dataset$year,
-  PIB = numeric(length(dataset$country_code))
-)
-
-# COmplete the new dataset
-for (i in 1:nrow(dataset)) {
-  focus_year <- dataset$year[i]
-  if (focus_year < 2022) {
-    year_column <- paste0("X", focus_year, sep = "")
-    transformed_dataset$PIB[i] <- dataset[i, which(year_column == colnames(dataset))]
-  }
-  else transformed_dataset$PIB[i] = NA
-}
-
-# Printing the transformed dataset
-print(transformed_dataset)
+View(transformed_PIB_capita_non_tri)
 
 
 
-
-                         
-                                   
-                                    
-                                    
-                       
-         
-                
 
 
 
