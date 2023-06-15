@@ -189,13 +189,57 @@ View(Merge_8)
 #En cours de travail
 
 #Tri données PIB/capita
-Merge_9 <- merge(PIB_capita, data_quantile, by="country_code")
+PIB_capita<-read_xls("PIB_capita.xls")
+View(PIB_capita)
+Merge_9 <- merge(PIB_capita, data_quantile , by="country_code")
 PIB_capita_non_tri <- Merge_9[, 1:33]
 colonne_year_max <- data$country_code[!duplicated(data$country_code)]
 data_year_max <- data[!duplicated(data$country_code), ]
 data_year_max <- data_year_max[,c("country_code","year")]
 PIB_capita_non_tri <- merge(data_year_max,PIB_capita_non_tri)
 PIB_capita_non_tri$year[PIB_capita_non_tri$year == 2020] <- 2019
+View(PIB_capita_non_tri)
+View(Merge_9)
+
+# Create the new dataset, with 0 in the PIB column
+transformed_PIB_capita_non_tri <- data.frame(
+  country_code = PIB_capita_non_tri$country_code,
+  focus_year = PIB_capita_non_tri$year,
+  PIB = numeric(length(PIB_capita_non_tri$country_code)))
+
+# Complete the new dataset
+for (i in 1:nrow(PIB_capita_non_tri)) {
+  focus_year <- PIB_capita_non_tri$year[i]
+  if (focus_year < 2022) {
+    year_column <- paste0("X", focus_year, sep = "")
+    
+    transformed_PIB_capita_non_tri$PIB[i] <- PIB_capita_non_tri[i, which(year_column == colnames(PIB_capita_non_tri))]
+  }
+  else transformed_PIB_capita_non_tri$PIB[i] = NA
+}
+
+# Printing the transformed dataset
+print(transformed_PIB_capita_non_tri)
+
+transformed_dataset <- data.frame(
+  country_code = dataset$country_code,
+  focus_year = dataset$year,
+  PIB = numeric(length(dataset$country_code))
+)
+
+# COmplete the new dataset
+for (i in 1:nrow(dataset)) {
+  focus_year <- dataset$year[i]
+  if (focus_year < 2022) {
+    year_column <- paste0("X", focus_year, sep = "")
+    transformed_dataset$PIB[i] <- dataset[i, which(year_column == colnames(dataset))]
+  }
+  else transformed_dataset$PIB[i] = NA
+}
+
+# Printing the transformed dataset
+print(transformed_dataset)
+
 
 
 
