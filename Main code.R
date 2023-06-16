@@ -208,7 +208,7 @@ transformed_PIB_capita_non_tri <- data.frame(
   PIB = numeric(length(PIB_capita_non_tri$country_code))
 )
 
-# COmplete the new PIB_capita_non_tri
+# Complete the new PIB_capita_non_tri
 for (i in 1:nrow(PIB_capita_non_tri)) {
   focus_year <- PIB_capita_non_tri$year[i]
   if (focus_year < 2022) {
@@ -221,6 +221,31 @@ for (i in 1:nrow(PIB_capita_non_tri)) {
 # Printing the transformed dataset
 print(transformed_PIB_capita_non_tri)
 View(transformed_PIB_capita_non_tri)
+
+PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
+View(PIB_pourcalcul)
+
+Merge_10 <- merge(transformed_PIB_capita_non_tri, PIB_pourcalcul, by="country_code")
+View(Merge_10)
+
+colnames(Merge_10)[4] <- c("X2021")
+Merge_10$Ratio_PIB <- NA
+for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
+View(Merge_10)
+
+colnames(Croissance_Pays3)[1] <- c("country_code")
+View(Croissance_Pays3)
+
+Merge_11 <- merge(Merge_10, Croissance_Pays3)
+View(Merge_11)
+
+
+
+
+ 
+ avgwelf(i)(1+g)^9  x PIB 2021/PIB country(i)
+
+
 
 
 
