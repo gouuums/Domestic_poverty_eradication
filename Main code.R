@@ -1,3 +1,5 @@
+install.packages("devtools")
+devtools::install_github("thomasblanchet/gpinter")
 library(gpinter)
 data<-read.csv("Povcalnet 2017.csv")
 
@@ -35,7 +37,6 @@ str(data_avgwelf)
 data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_avg_welfare, values_fill = 0) %>%
   head()
-View(data_pivot)
 
 #Tableau du welfare share par percentile
 data_pivot <- data %>%
@@ -147,7 +148,7 @@ Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
 colnames(Croissance_Pays3)[1] <- country_code
 Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
 colnames(Merge_6)[9] <- c("Moyenne croissance")
-Croissance_pays_final <- Merge_6[,c("country_code","2021","Moyenne croissance")]
+Croissance_pays_final <- Merge_6[,c("country_code","Growth rate 2021","Moyenne croissance")]
 
 # Calcul projections de Croissance
 
@@ -184,13 +185,11 @@ colnames(Croissance_pays_final)[2] <- c("SUPP")
 Croissance_pays_final <- subset(Croissance_pays_final, select=-c(SUPP))
 Merge_7 <- merge(Merge_5, Croissance_pays_final)
 Merge_8 <- merge(Merge_7, Pov_gap)
-View(Merge_8)
 
 #En cours de travail
 
 #Tri données PIB/capita
 PIB_capita<-read_xls("PIB_capita.xls")
-View(PIB_capita)
 Merge_9 <- merge(PIB_capita, data_quantile , by="country_code")
 PIB_capita_non_tri <- Merge_9[, 1:33]
 colonne_year_max <- data$country_code[!duplicated(data$country_code)]
@@ -198,11 +197,8 @@ data_year_max <- data[!duplicated(data$country_code), ]
 data_year_max <- data_year_max[,c("country_code","year")]
 PIB_capita_non_tri <- merge(data_year_max,PIB_capita_non_tri)
 PIB_capita_non_tri$year[PIB_capita_non_tri$year == 2020] <- 2019
-View(PIB_capita_non_tri)
-View(Merge_9)
 
-# Create the new dataset, with 0 in the PIB column
-transformed_PIB_capita_non_tri <- data.frame(
+PIB_capita_tri <- data.frame(
   country_code = PIB_capita_non_tri$country_code,
   focus_year = PIB_capita_non_tri$year,
   PIB = numeric(length(PIB_capita_non_tri$country_code))
@@ -212,15 +208,14 @@ transformed_PIB_capita_non_tri <- data.frame(
 for (i in 1:nrow(PIB_capita_non_tri)) {
   focus_year <- PIB_capita_non_tri$year[i]
   if (focus_year < 2022) {
-    year_column <- paste0("X", focus_year, sep = "")
-    transformed_PIB_capita_non_tri$PIB[i] <- PIB_capita_non_tri[i, which(year_column == colnames(dataset))]
+    year_column <- colnames(PIB_capita_non_tri)[which(colnames(PIB_capita_non_tri) == paste0(focus_year))]
+    PIB_capita_tri$PIB[i] <- PIB_capita_non_tri[i, year_column]
   }
-  else transformed_PIB_capita_non_tri$PIB[i] = NA
+  else PIB_capita_tri$PIB[i] = NA
 }
 
-# Printing the transformed dataset
-print(transformed_PIB_capita_non_tri)
-View(transformed_PIB_capita_non_tri)
+print(PIB_capita_tri)
+View(PIB_capita_tri)
 
 PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
 View(PIB_pourcalcul)
