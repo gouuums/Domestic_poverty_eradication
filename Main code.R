@@ -13,6 +13,15 @@ data<-read.csv("Povcalnet 2017.csv")
 # calculer: trouver valeur au delà de laquelle il faut tout expropier pour combler pgap avec transferts internes
 # autre indicateurs: au delà de 2,15$ impôt linéaire; quel tx appliquer pour combler pvgap et regarder tx linéaire de 2,15`$, 6,95$, 13$`
 
+#Récup données perso (Elise)
+library(readr)
+data <- read.csv("C:/Users/elise/Documents/stage Cired/Domestic_poverty_eradication/Povcalnet 2017.csv")
+library(readxl)
+Croissance_pays <- read_excel("C:/Users/elise/Documents/stage Cired/Croissance pays.xls")
+library(readxl)
+PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
+
+
 #Récupération des données
 library(tidyverse)
 data <- read.csv("Povcalnet 2017.csv")
@@ -148,6 +157,7 @@ Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
 colnames(Croissance_Pays3)[1] <- country_code
 Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
 colnames(Merge_6)[9] <- c("Moyenne croissance")
+library(dplyr)
 Croissance_pays_final <- Merge_6[,c("country_code","Growth rate 2021","Moyenne croissance")]
 
 # Calcul projections de Croissance
@@ -186,8 +196,6 @@ Croissance_pays_final <- subset(Croissance_pays_final, select=-c(SUPP))
 Merge_7 <- merge(Merge_5, Croissance_pays_final)
 Merge_8 <- merge(Merge_7, Pov_gap)
 
-#En cours de travail
-
 #Tri données PIB/capita
 PIB_capita<-read_xls("PIB_capita.xls")
 Merge_9 <- merge(PIB_capita, data_quantile , by="country_code")
@@ -204,7 +212,6 @@ PIB_capita_tri <- data.frame(
   PIB = numeric(length(PIB_capita_non_tri$country_code))
 )
 
-# Complete the new PIB_capita_non_tri
 for (i in 1:nrow(PIB_capita_non_tri)) {
   focus_year <- PIB_capita_non_tri$year[i]
   if (focus_year < 2022) {
@@ -214,30 +221,27 @@ for (i in 1:nrow(PIB_capita_non_tri)) {
   else PIB_capita_tri$PIB[i] = NA
 }
 
-print(PIB_capita_tri)
-View(PIB_capita_tri)
-
-#Calcul ratio de PIB
+#Calcul de ratio de PIB
 PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
 Merge_10 <- merge(PIB_capita_tri, PIB_pourcalcul, by="country_code")
 colnames(Merge_10)[4] <- c("X2021")
 Merge_10$Ratio_PIB <- NA
 for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
-View(Merge_10)
 colnames(Croissance_Pays3)[1] <- c("country_code")
-View(Croissance_Pays3)
 Merge_11 <- merge(Merge_10, Croissance_Pays3)
-View(Merge_11)
 
-
-# En cours:
+#En cours de travail
 
 Merge_11$Tx_Calage <- NA
-for(i in 1:length(Merge_11$`Ratio_PIB`)) for(j in 1:length(Merge_11$`Moyenne_croissance$RowMean`)) Merge_11$Tx_Calage[i] <- (Merge_11$`Ratio_PIB`[i]*(1+Merge_11$`Moyenne_croissance$RowMean`[j])^9)
-View(Merge_11)
- 
+for(i in 1:length(Merge_11$`Ratio_PIB`)) for(j in 1:length(Merge_11$`Moyenne_croissance$RowMean`)) Merge_11$Tx_Calage[i] <- (Merge_11$`Ratio_PIB`[i]*(1+Merge_11$`Moyenne_croissance$RowMean`[j]/100)^9)
 
- avgwelf(i)(1+g)^9  x PIB 2021/PIB country(i)
+data_calage <- merge( Merge_11, data_avgwelf)
+data_calage <- data_calage[-c(2:13)]
+calcul_calage <- data_calage
+calcul_calage[,3:101] <- calcul_calage[,3:101]*calcul_calage[,2]
+avgwelf_calage_of_p <- paste0("avgwelf_calage_of_p", 1:(ncol(calcul_calage)-2))
+colnames(calcul_calage)[3:102] <- avgwelf_calage_of_p
+View(calcul_calage)
 
 
 
