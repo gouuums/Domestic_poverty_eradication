@@ -23,7 +23,7 @@ data <- data[data$year == data$year_max,]
 library(readxl)
 Croissance_pays <- read_excel("Croissance pays.xls")
 library(readxl)
-PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
+PIB_capita <- read_excel("/Users/goumont/Desktop/Stage/PIB_capita.xls")
 
 #Tableau de l'average welfare par percentile
 data_pivot <- data %>%
@@ -154,7 +154,7 @@ Croissance_pays_final <- Merge_6[,c("country_code","Growth rate 2021","Moyenne c
 
 colnames(Moyenne_croissance)[1] <- c("x")
 Croissance_pays_final$Growth_projections_2022 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2022[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^9*(Croissance_pays_final$`2021`[i])
+for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2022[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^9*(Croissance_pays_final$`Growth rate 2021`[i])
 
 Croissance_pays_final$Growth_projections_2023 <- NA
 for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2023[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^8*(Croissance_pays_final$`Growth_projections_2022`[i])
@@ -217,27 +217,26 @@ for (i in 1:nrow(PIB_capita_non_tri)) {
 print(PIB_capita_tri)
 View(PIB_capita_tri)
 
+#Calcul ratio de PIB
 PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
-View(PIB_pourcalcul)
-
-Merge_10 <- merge(transformed_PIB_capita_non_tri, PIB_pourcalcul, by="country_code")
-View(Merge_10)
-
+Merge_10 <- merge(PIB_capita_tri, PIB_pourcalcul, by="country_code")
 colnames(Merge_10)[4] <- c("X2021")
 Merge_10$Ratio_PIB <- NA
 for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
 View(Merge_10)
-
 colnames(Croissance_Pays3)[1] <- c("country_code")
 View(Croissance_Pays3)
-
 Merge_11 <- merge(Merge_10, Croissance_Pays3)
 View(Merge_11)
 
 
+# En cours:
 
-
+Merge_11$Tx_Calage <- NA
+for(i in 1:length(Merge_11$`Ratio_PIB`)) for(j in 1:length(Merge_11$`Moyenne_croissance$RowMean`)) Merge_11$Tx_Calage[i] <- (Merge_11$`Ratio_PIB`[i]*(1+Merge_11$`Moyenne_croissance$RowMean`[j])^9)
+View(Merge_11)
  
+
  avgwelf(i)(1+g)^9  x PIB 2021/PIB country(i)
 
 
