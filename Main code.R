@@ -245,8 +245,3 @@ View(calcul_calage)
 
 
 
-
-
-
-
-
