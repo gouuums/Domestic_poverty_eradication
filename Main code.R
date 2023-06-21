@@ -15,11 +15,12 @@ data<-read.csv("Povcalnet 2017.csv")
 
 #Récup données perso (Elise)
 library(readr)
-data <- read.csv("C:/Users/elise/Documents/stage Cired/Domestic_poverty_eradication/Povcalnet 2017.csv")
+data <- read.csv("/Users/goumont/Desktop/Stage/Domestic_poverty_eradication/Povcalnet 2017.csv")
 library(readxl)
-Croissance_pays <- read_excel("C:/Users/elise/Documents/stage Cired/Croissance pays.xls")
+Croissance_pays <- read_excel("/Users/goumont/Desktop/Stage/Domestic_poverty_eradication/Croissance pays.xls")
 library(readxl)
-PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
+PIB_capita <- read_excel("/Users/goumont/Desktop/Stage/Domestic_poverty_eradication/PIB_capita.xls")
+
 
 
 #Récupération des données
@@ -29,6 +30,8 @@ temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
+
+
 library(readxl)
 Croissance_pays <- read_excel("Croissance pays.xls")
 library(readxl)
@@ -111,6 +114,7 @@ colnames(data_welfare_type)[1] <- country_code
 country_code <- colnames(data_avgwelf)[1]
 avgwelf <- paste0("avgwelf", 1:(ncol(data_avgwelf)-1))
 colnames(data_avgwelf)[-1] <- avgwelf
+
 colnames(data_avgwelf)[1] <- country_code
 
 country_code <- colnames(data_pop_share)[1]
@@ -134,6 +138,7 @@ Merge_2 <- merge(Merge_1,data_pop_share)
 Merge_3 <- merge(Merge_2, data_welfshare)
 Merge_4 <- merge(Merge_3,data_quantile)
 Merge_5 <- merge(Merge_4, Croissance_pays)
+View(Merge_5)
 
 #Calcul du Poverty Gap individuel et national
 Seuil <- 2.15
@@ -156,6 +161,7 @@ Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
 
 colnames(Croissance_Pays3)[1] <- country_code
 Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
+View(Merge_6)
 colnames(Merge_6)[9] <- c("Moyenne croissance")
 library(dplyr)
 Croissance_pays_final <- Merge_6[,c("country_code","Growth rate 2021","Moyenne croissance")]
@@ -224,6 +230,7 @@ for (i in 1:nrow(PIB_capita_non_tri)) {
 #Calcul de ratio de PIB
 PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
 Merge_10 <- merge(PIB_capita_tri, PIB_pourcalcul, by="country_code")
+View(Merge_10)
 colnames(Merge_10)[4] <- c("X2021")
 Merge_10$Ratio_PIB <- NA
 for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
@@ -242,6 +249,90 @@ calcul_calage[,3:101] <- calcul_calage[,3:101]*calcul_calage[,2]
 avgwelf_calage_of_p <- paste0("avgwelf_calage_of_p", 1:(ncol(calcul_calage)-2))
 colnames(calcul_calage)[3:102] <- avgwelf_calage_of_p
 View(calcul_calage)
+
+
+#calculer pour chaque pays le "anti-poverty maximum"=le seuil à partir duquel il faut exproprier tous les revenus pour éradiquer la pauvreté au seuil de 2.15$ 
+#calculer le "anti-poverty tax", i.e. taux de taxation (au-delà de, disons, 6.85$) nécessaire pour combler le poverty gap
+
+# Calcul projections de Croissance bis
+
+
+# Ratio des PIB en 2017 PPP pour trouver les taux de croissance en 2017 PPP
+
+new_PIB2017 <- read_xlsx("/Users/goumont/Desktop/Stage/Mardi 20:06.xlsx")
+new_PIB2017 <- new_PIB2017[-c(1), ]
+colnames(new_PIB2017)[1] <- country_code
+colnames(new_PIB2017)[2] <- c("X2015")
+colnames(new_PIB2017)[3] <- c("X2016")
+colnames(new_PIB2017)[4] <- c("X2017")
+colnames(new_PIB2017)[5] <- c("X2018")
+colnames(new_PIB2017)[6] <- c("X2019")
+colnames(new_PIB2017)[7] <- c("X2021")
+view(new_PIB2017)
+
+G_PIB2017 <- merge(new_PIB2017, PIB_capita_tri)
+
+G_PIB2017$X2015 <- as.numeric(G_PIB2017$X2015)
+G_PIB2017$X2016 <- as.numeric(G_PIB2017$X2016)
+G_PIB2017$X2017 <- as.numeric(G_PIB2017$X2017)
+G_PIB2017$X2018 <- as.numeric(G_PIB2017$X2018)
+G_PIB2017$X2019 <- as.numeric(G_PIB2017$X2019)
+G_PIB2017$X2021 <- as.numeric(G_PIB2017$X2021)
+G_PIB2017 <- G_PIB2017[, -10]
+G_PIB2017$Growth_rate1 <- NA
+for(i in 1:length(G_PIB2017$`X2015`)) for(i in 1:length(G_PIB2017$`X2016`)) G_PIB2017$Growth_rate1[i] <- (G_PIB2017$`X2016`[i]/G_PIB2017$`X2015`[i])
+G_PIB2017$Growth_rate2 <- NA
+for(i in 1:length(G_PIB2017$`X2016`)) for(i in 1:length(G_PIB2017$`X2017`)) G_PIB2017$Growth_rate2[i] <- (G_PIB2017$`X2017`[i]/G_PIB2017$`X2016`[i])
+G_PIB2017$Growth_rate3 <- NA
+for(i in 1:length(G_PIB2017$`X2017`)) for(i in 1:length(G_PIB2017$`X2018`)) G_PIB2017$Growth_rate3[i] <- (G_PIB2017$`X2018`[i]/G_PIB2017$`X2017`[i])
+G_PIB2017$Growth_rate4 <- NA
+for(i in 1:length(G_PIB2017$`X2018`)) for(i in 1:length(G_PIB2017$`X2019`)) G_PIB2017$Growth_rate4[i] <- (G_PIB2017$`X2019`[i]/G_PIB2017$`X2018`[i])
+G_PIB2017$Growth_rate5 <- NA
+for(i in 1:length(G_PIB2017$`X2019`)) for(i in 1:length(G_PIB2017$`X2021`)) G_PIB2017$Growth_rate5[i] <- (G_PIB2017$`X2021`[i]/G_PIB2017$`X2019`[i])
+G_PIB2017 <- G_PIB2017[, -2]
+G_PIB2017 <- G_PIB2017[, -3]
+G_PIB2017 <- G_PIB2017[, -7]
+G_PIB2017 <- G_PIB2017[, -4]
+G_PIB2017 <- G_PIB2017[, -2]
+G_PIB2017 <- G_PIB2017[, -2]
+G_PIB2017 <- G_PIB2017[, -2]
+G_PIB2017 <- G_PIB2017[, -1]
+
+# Moyenne sur les 5 dernières années avec ces tx pour trouver le g en 2017 PPP
+
+G_PIB2017$g_moyen <-rowMeans(G_PIB2017)
+View(G_PIB2017)
+
+# calcul des projections de PIB de 2022 à 2030
+
+new_PIB2017bis <- merge(new_PIB2017,data_avgwelf, by=country_code)
+View(new_PIB2017bis)
+G_PIB2017_final <- cbind(new_PIB2017bis$country_code, new_PIB2017bis$X2021, G_PIB2017)
+colnames(G_PIB2017_final)[1:2] <- c("country_code","PIB_2021")
+View(G_PIB2017_final)
+
+G_PIB2017_final$PIB_2021 <- as.numeric(G_PIB2017_final$PIB_2021)
+G_PIB2017_final$PIBproj_2022 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2022[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^9*(G_PIB2017_final$`PIB_2021`[i])
+G_PIB2017_final$PIBproj_2023 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2023[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^8*(G_PIB2017_final$`PIBproj_2022`[i])
+G_PIB2017_final$PIBproj_2024 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2024[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^7*(G_PIB2017_final$`PIBproj_2023`[i])
+G_PIB2017_final$PIBproj_2025 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2025[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^6*(G_PIB2017_final$`PIBproj_2024`[i])
+G_PIB2017_final$PIBproj_2026 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2026[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^5*(G_PIB2017_final$`PIBproj_2025`[i])
+G_PIB2017_final$PIBproj_2027 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2027[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^4*(G_PIB2017_final$`PIBproj_2026`[i])
+G_PIB2017_final$PIBproj_2028 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2028[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^3*(G_PIB2017_final$`PIBproj_2027`[i])
+G_PIB2017_final$PIBproj_2029 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2029[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^2*(G_PIB2017_final$`PIBproj_2028`[i])
+G_PIB2017_final$PIBproj_2030 <- NA
+for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2030[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^1*(G_PIB2017_final$`PIBproj_2029`[i])
+View(G_PIB2017_final)
+
+
 
 
 
