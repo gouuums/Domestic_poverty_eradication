@@ -2,6 +2,7 @@
 # AF: je ne vois aucune fonction dans votre code. Une bonne façon de coder c'est d'utiliser des fonctions (ma_fonction <- function(argument1) { ... } )
 library(dplyr)
 library(readr)
+library(readxl)
 library(tidyverse)
 
 # install.packages("devtools")
@@ -23,7 +24,7 @@ data<-read.csv("Povcalnet 2017.csv")
 data <- read.csv("Povcalnet 2017.csv") # AF: faut toujours mettre des chemins de fichiers relatifs, pas absolu
 # AF: il vaut mieux écrire le code en anglais pour qu'il puisse être compris par le monde entier
 Croissance_pays <- read_excel("Croissance pays.xls") # AF: c'est pas dans le répertoire ! Faut mettre ces trucs dans un dossier /Data dans le répertoire github
-PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls") # AF: same here
+PIB_capita <- read_excel("PIB_capita.xls") # AF: same here
 
 
 #Récupération des données
@@ -31,8 +32,6 @@ temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
-Croissance_pays <- read_excel("Croissance pays.xls")
-PIB_capita <- read_excel("/Users/goumont/Desktop/Stage/PIB_capita.xls")
 
 #Reglages tableau pour les pays qui n'ont pas un reporting level national
 data$country_code <- ifelse(data$reporting_level %in% c("rural", "urban"), paste(data$country_code, data$reporting_level, sep = "_"), data$country_code)
@@ -258,20 +257,20 @@ Anti_pov_gap_nv_seuil <- Anti_pov_gap_nv_seuil[-c(2:101)]
 Anti_pov_gap_avg_welf <- merge(Pov_gap, data_avgwelf)
 Anti_pov_gap_avg_welf <- Anti_pov_gap_avg_welf[-c(2:101)]
 Anti_pov_gap <- data.frame(country_code = Anti_pov_gap_nv_seuil$country_code, Pov_gap_nat = Anti_pov_gap_nv_seuil$Somme_pov_gap )
-Anti_pov_gap$fund <- 0
+Anti_pov_gap$funded <- 0
 Anti_pov_gap$percentile_expropriated <- NA
 for (row in 1:nrow(Anti_pov_gap)) {
-  fund <- Anti_pov_gap[row, "fund"]
+  funded <- Anti_pov_gap[row, "funded"]
   i <- 102
-  while (fund < Anti_pov_gap$Pov_gap_nat[row] && i >= 3) {
+  while (funded < Anti_pov_gap$Pov_gap_nat[row] && i >= 3) {
     percentile_expropriated_seuil <- colnames(Anti_pov_gap_nv_seuil)[i-1]
     percentile_expropriated_welf <- colnames(Anti_pov_gap_avg_welf)[i]
-    fund <- fund + Anti_pov_gap_avg_welf[percentile_expropriated_welf] - Anti_pov_gap_nv_seuil[percentile_expropriated_seuil]
+    funded <- funded + Anti_pov_gap_avg_welf[row, percentile_expropriated_welf] - Anti_pov_gap_nv_seuil[row, percentile_expropriated_seuil]
     i <- i - 1
   }
-  if (i < 3 || fund >= Anti_pov_gap$Pov_gap_nat[row]) {
+  if (i < 3 || funded >= Anti_pov_gap$Pov_gap_nat[row]) {
     Anti_pov_gap$percentile_expropriated[row] <- as.numeric(gsub("avgwelf", "", percentile_expropriated_welf))
-    Anti_pov_gap[row, "fund"] <- fund
+    Anti_pov_gap[row, "funded"] <- funded
   }
 }
 
