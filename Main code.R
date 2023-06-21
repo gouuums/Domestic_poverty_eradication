@@ -4,8 +4,8 @@ library(dplyr)
 library(readr)
 library(tidyverse)
 
-install.packages("devtools")
-devtools::install_github("thomasblanchet/gpinter")
+# install.packages("devtools")
+# devtools::install_github("thomasblanchet/gpinter")
 library(gpinter)
 data<-read.csv("Povcalnet 2017.csv")
 
@@ -20,14 +20,13 @@ data<-read.csv("Povcalnet 2017.csv")
 # autre indicateurs: au delà de 2,15$ impôt linéaire; quel tx appliquer pour combler pvgap et regarder tx linéaire de 2,15`$, 6,95$, 13$`
 
 #Récup données perso (Elise)
-data <- read.csv("C:/Users/elise/Documents/stage Cired/Domestic_poverty_eradication/Povcalnet 2017.csv")
+data <- read.csv("Povcalnet 2017.csv") # AF: faut toujours mettre des chemins de fichiers relatifs, pas absolu
 # AF: il vaut mieux écrire le code en anglais pour qu'il puisse être compris par le monde entier
-Croissance_pays <- read_excel("C:/Users/elise/Documents/stage Cired/Croissance pays.xls")
-PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
+Croissance_pays <- read_excel("Croissance pays.xls") # AF: c'est pas dans le répertoire ! Faut mettre ces trucs dans un dossier /Data dans le répertoire github
+PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls") # AF: same here
 
 
 #Récupération des données
-data <- read.csv("Povcalnet 2017.csv")
 temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
@@ -260,8 +259,6 @@ Anti_pov_gap_avg_welf <- merge(Pov_gap, data_avgwelf)
 Anti_pov_gap_avg_welf <- Anti_pov_gap_avg_welf[-c(2:101)]
 Anti_pov_gap <- data.frame(country_code = Anti_pov_gap_nv_seuil$country_code, Pov_gap_nat = Anti_pov_gap_nv_seuil$Somme_pov_gap )
 Anti_pov_gap$fund <- 0
-fund <- Anti_pov_gap$fund
-i <- 102
 Anti_pov_gap$percentile_expropriated <- NA
 for (row in 1:nrow(Anti_pov_gap)) {
   fund <- Anti_pov_gap[row, "fund"]
