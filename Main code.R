@@ -1,3 +1,9 @@
+# AF: tout ce qui est avant consigne peut être mis dans un fichier nommé ".Rprofile" pour que les paquets se chargent à l'ouverture du projet.
+# AF: je ne vois aucune fonction dans votre code. Une bonne façon de coder c'est d'utiliser des fonctions (ma_fonction <- function(argument1) { ... } )
+library(dplyr)
+library(readr)
+library(tidyverse)
+
 install.packages("devtools")
 devtools::install_github("thomasblanchet/gpinter")
 library(gpinter)
@@ -14,24 +20,19 @@ data<-read.csv("Povcalnet 2017.csv")
 # autre indicateurs: au delà de 2,15$ impôt linéaire; quel tx appliquer pour combler pvgap et regarder tx linéaire de 2,15`$, 6,95$, 13$`
 
 #Récup données perso (Elise)
-library(readr)
 data <- read.csv("C:/Users/elise/Documents/stage Cired/Domestic_poverty_eradication/Povcalnet 2017.csv")
-library(readxl)
+# AF: il vaut mieux écrire le code en anglais pour qu'il puisse être compris par le monde entier
 Croissance_pays <- read_excel("C:/Users/elise/Documents/stage Cired/Croissance pays.xls")
-library(readxl)
 PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
 
 
 #Récupération des données
-library(tidyverse)
 data <- read.csv("Povcalnet 2017.csv")
 temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
-library(readxl)
 Croissance_pays <- read_excel("Croissance pays.xls")
-library(readxl)
 PIB_capita <- read_excel("/Users/goumont/Desktop/Stage/PIB_capita.xls")
 
 #Tableau de l'average welfare par percentile
@@ -157,7 +158,6 @@ Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
 colnames(Croissance_Pays3)[1] <- country_code
 Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code")
 colnames(Merge_6)[9] <- c("Moyenne croissance")
-library(dplyr)
 Croissance_pays_final <- Merge_6[,c("country_code","Growth rate 2021","Moyenne croissance")]
 
 # Calcul projections de Croissance
