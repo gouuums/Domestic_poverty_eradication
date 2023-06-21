@@ -8,8 +8,15 @@ library(tidyverse)
 # install.packages("devtools")
 # devtools::install_github("thomasblanchet/gpinter")
 library(gpinter)
-data<-read.csv("Povcalnet 2017.csv")
+library(tidyverse)
 
+#Récup données perso (Elise)
+library(readr)
+data <- read.csv("C:/Users/elise/Documents/stage Cired/Domestic_poverty_eradication/Povcalnet 2017.csv")
+library(readxl)
+Croissance_pays <- read_excel("C:/Users/elise/Documents/stage Cired/Croissance pays.xls")
+library(readxl)
+PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
 #CONSIGNES
 # Pour tous pays récupérer la dernière année des donnéeSdispo 
 # estimer taux crissance  entre cette année kla et 2030 (cf tx croissance observée sur BM en $ 2017 PPP)
@@ -26,16 +33,11 @@ data <- read.csv("Povcalnet 2017.csv") # AF: faut toujours mettre des chemins de
 Croissance_pays <- read_excel("Croissance pays.xls") # AF: c'est pas dans le répertoire ! Faut mettre ces trucs dans un dossier /Data dans le répertoire github
 PIB_capita <- read_excel("PIB_capita.xls") # AF: same here
 
-
-
 #Récupération des données
 temp <- data %>% group_by(country_code) %>% summarize(year_max= max(year))
 year_max <- setNames(temp$year_max, temp$country_code)
 data$year_max <- year_max[data$country_code]
 data <- data[data$year == data$year_max,]
-
-#Reglages tableau pour les pays qui n'ont pas un reporting level national
-data$country_code <- ifelse(data$reporting_level %in% c("rural", "urban"), paste(data$country_code, data$reporting_level, sep = "_"), data$country_code)
 
 #Tableau de l'average welfare par percentile
 data_pivot <- data %>%
@@ -102,9 +104,6 @@ data_pivot %>%
   pivot_wider(names_from = percentile, values_from = mean_welfare_type, values_fill = 0) %>%
   head()
 
-#Croissance de 2014 à 2021
-colnames(Croissance_pays)[1:2:3:4:5:6:7:8:9] <- c("country_code","Growth rate 2014", "Growth rate 2015","Growth rate 2016", "Growth rate 2017", "Growth rate 2018","Growth rate 2019","Growth rate 2020","Growth rate 2021")
-
 #Reglages sur les noms des colonnes des percentiles
 country_code <- colnames(data_welfare_type)[1]
 welftype <- paste0("welftype", 1:(ncol(data_welfare_type)-1))
@@ -137,8 +136,6 @@ Merge_1 <- merge(data_welfare_type, data_avgwelf)
 Merge_2 <- merge(Merge_1,data_pop_share)
 Merge_3 <- merge(Merge_2, data_welfshare)
 Merge_4 <- merge(Merge_3,data_quantile)
-Merge_5 <- merge(Merge_4, Croissance_pays, by = "country_code", all = TRUE)
-Merge_5 <- Merge_5[!is.null(Merge_5$welftype1) & Merge_5$welftype1 != "NULL", ]
 
 #Calcul du Poverty Gap individuel et national
 Seuil <- 2.15
@@ -149,63 +146,6 @@ Pov_gap_of_p <- paste0("Pov_gap_of_p", 1:(ncol(data_avgwelf)-1))
 colnames(Pov_gap)[-1] <- Pov_gap_of_p
 colnames(Pov_gap)[1] <- country_code
 Pov_gap$Somme_pov_gap <- rowSums(Pov_gap[, -1], na.rm = TRUE)
-
-# Croissance Moyenne
-colnames(Croissance_pays)[8] <- c("z")
-colnames(Croissance_pays)[7] <- c("Growth rate 2019 ")
-Croissance_Pays2 <- subset(Croissance_pays, select=-c(z))
-moyenne <- rowMeans(Croissance_Pays2[, -1], na.rm = TRUE)
-Moyenne_croissance <- data.frame(RowMean = moyenne)
-Croissance_Pays3 <- cbind(Croissance_Pays2, Moyenne_croissance$RowMean)
-colnames(Croissance_Pays3)[1] <- country_code
-Merge_6 <- merge(Croissance_Pays3, data_quantile, by="country_code",all = TRUE)
-Merge_6 <- Merge_6[!is.na(Merge_6$quant1), ]
-colnames(Merge_6)[9] <- c("Moyenne croissance")
-Croissance_pays_final <- Merge_6[,c("country_code","Growth rate 2021","Moyenne croissance")]
-missing_country_codes <- subset(Croissance_pays_final, !complete.cases(Croissance_pays_final$`Moyenne croissance`))$country_code
-Croissance_pays_final[Croissance_pays_final$country_code == "ARG_urban", c("Growth rate 2021", "Moyenne croissance")] <- c(10.3982495, 0.9623874)
-Croissance_pays_final[Croissance_pays_final$country_code == "CHN_rural", c("Growth rate 2021", "Moyenne croissance")] <- c(8.1097926, 7.0104461)
-Croissance_pays_final[Croissance_pays_final$country_code == "CHN_urban", c("Growth rate 2021", "Moyenne croissance")] <- c(8.1097926, 7.0104461)
-Croissance_pays_final[Croissance_pays_final$country_code == "IDN_rural", c("Growth rate 2021", "Moyenne croissance")] <- c(3.6912401, 4.8386664)
-Croissance_pays_final[Croissance_pays_final$country_code == "IDN_urban", c("Growth rate 2021", "Moyenne croissance")] <- c(3.6912401, 4.8386664)
-Croissance_pays_final[Croissance_pays_final$country_code == "IND_rural", c("Growth rate 2021", "Moyenne croissance")] <- c(8.6812287, 7.0473098)
-Croissance_pays_final[Croissance_pays_final$country_code == "IND_urban", c("Growth rate 2021", "Moyenne croissance")] <- c(8.6812287, 7.0473098)
-Croissance_pays_final[Croissance_pays_final$country_code == "SUR_urban", c("Growth rate 2021", "Moyenne croissance")] <- c(-2.7296188, -0.4452484)
-
-#A REVOIR TOTALEMENT Calcul projections de Croissance
-colnames(Moyenne_croissance)[1] <- c("x")
-Croissance_pays_final$Growth_projections_2022 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2022[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^9*(Croissance_pays_final$`Growth rate 2021`[i])
-
-Croissance_pays_final$Growth_projections_2023 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2023[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^8*(Croissance_pays_final$`Growth_projections_2022`[i])
-
-Croissance_pays_final$Growth_projections_2024 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2024[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^7*(Croissance_pays_final$`Growth_projections_2023`[i])
-
-Croissance_pays_final$Growth_projections_2025 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2025[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^6*(Croissance_pays_final$`Growth_projections_2024`[i])
-
-Croissance_pays_final$Growth_projections_2026 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2026[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^5*(Croissance_pays_final$`Growth_projections_2025`[i])
-
-Croissance_pays_final$Growth_projections_2027 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2027[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^4*(Croissance_pays_final$`Growth_projections_2026`[i])
-
-Croissance_pays_final$Growth_projections_2028 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2028[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^3*(Croissance_pays_final$`Growth_projections_2027`[i])
-
-Croissance_pays_final$Growth_projections_2029 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2029[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^2*(Croissance_pays_final$`Growth_projections_2028`[i])
-
-Croissance_pays_final$Growth_projections_2030 <- NA
-for(i in 1:length(Croissance_pays_final$`Moyenne croissance`)) Croissance_pays_final$Growth_projections_2030[i] <- ((Croissance_pays_final$`Moyenne croissance`[i]/100)+1)^1*(Croissance_pays_final$`Growth_projections_2029`[i])
-
-#Merge croissance et pov gap dans notre grand tableau
-colnames(Croissance_pays_final)[2] <- c("SUPP")
-Croissance_pays_final <- subset(Croissance_pays_final, select=-c(SUPP))
-Merge_7 <- merge(Merge_5, Croissance_pays_final)
-Merge_8 <- merge(Merge_7, Pov_gap)
 
 #Tri données PIB/capita
 PIB_capita<-read_xls("PIB_capita.xls")
@@ -232,63 +172,8 @@ for (i in 1:nrow(PIB_capita_non_tri)) {
   else PIB_capita_tri$PIB[i] = NA
 }
 
-#Calcul de ratio de PIB
-PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
-Merge_10 <- merge(PIB_capita_tri, PIB_pourcalcul, by="country_code")
-View(Merge_10)
-colnames(Merge_10)[4] <- c("X2021")
-Merge_10$Ratio_PIB <- NA
-for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
-colnames(Croissance_Pays3)[1] <- c("country_code")
-Merge_11 <- merge(Merge_10, Croissance_Pays3)
-
-Merge_11$Tx_Calage <- NA
-for(i in 1:length(Merge_11$`Ratio_PIB`)) for(j in 1:length(Merge_11$`Moyenne_croissance$RowMean`)) Merge_11$Tx_Calage[i] <- (Merge_11$`Ratio_PIB`[i]*(1+Merge_11$`Moyenne_croissance$RowMean`[j]/100)^9)
-
-data_calage <- merge( Merge_11, data_avgwelf)
-data_calage <- data_calage[-c(2:13)]
-calcul_calage <- data_calage
-calcul_calage[,3:101] <- calcul_calage[,3:101]*calcul_calage[,2]
-avgwelf_calage_of_p <- paste0("avgwelf_calage_of_p", 1:(ncol(calcul_calage)-2))
-colnames(calcul_calage)[3:102] <- avgwelf_calage_of_p
-
-#En cours de travail
-
-#Peut on combler le poverty gap avec seulement des échanges internes?
-Anti_pov_gap_nv_seuil <- merge(Pov_gap, data_quantile)
-Anti_pov_gap_nv_seuil <- Anti_pov_gap_nv_seuil[-c(2:101)]
-Anti_pov_gap_avg_welf <- merge(Pov_gap, data_avgwelf)
-Anti_pov_gap_avg_welf <- Anti_pov_gap_avg_welf[-c(2:101)]
-Anti_pov_gap <- data.frame(country_code = Anti_pov_gap_nv_seuil$country_code, Pov_gap_nat = Anti_pov_gap_nv_seuil$Somme_pov_gap )
-Anti_pov_gap$funded <- 0
-Anti_pov_gap$percentile_expropriated <- NA
-for (row in 1:nrow(Anti_pov_gap)) {
-  funded <- Anti_pov_gap[row, "funded"]
-  i <- 102
-  while (funded < Anti_pov_gap$Pov_gap_nat[row] && i >= 3) {
-    percentile_expropriated_seuil <- colnames(Anti_pov_gap_nv_seuil)[i-1]
-    percentile_expropriated_welf <- colnames(Anti_pov_gap_avg_welf)[i]
-    funded <- funded + Anti_pov_gap_avg_welf[row, percentile_expropriated_welf] - Anti_pov_gap_nv_seuil[row, percentile_expropriated_seuil]
-    i <- i - 1
-  }
-  if (i < 3 || funded >= Anti_pov_gap$Pov_gap_nat[row]) {
-    Anti_pov_gap$percentile_expropriated[row] <- as.numeric(gsub("avgwelf", "", percentile_expropriated_welf))
-    Anti_pov_gap[row, "funded"] <- funded
-  }
-}
-#calculer pour chaque pays le "anti-poverty maximum"=le seuil à partir duquel il faut exproprier tous les revenus pour éradiquer la pauvreté au seuil de 2.15$ 
-#calculer le "anti-poverty tax", i.e. taux de taxation (au-delà de, disons, 6.85$) nécessaire pour combler le poverty gap
-
-# Calcul projections de Croissance bis
-write.csv2(Anti_pov_gap_avg_welf, file = "C:/Users/elise/Documents/stage Cired/Anti_pov_gap_avg_welf.csv", row.names = FALSE)
-write.csv2(Anti_pov_gap_nv_seuil, file = "C:/Users/elise/Documents/stage Cired/Anti_pov_gap_nv_seuil.csv", row.names = FALSE)
-write.csv2(Anti_pov_gap, file = "C:/Users/elise/Documents/stage Cired/Anti_pov_gap.csv", row.names = FALSE)
-
-
-
 # Ratio des PIB en 2017 PPP pour trouver les taux de croissance en 2017 PPP
-
-new_PIB2017 <- read_xlsx("/Users/goumont/Desktop/Stage/Mardi 20:06.xlsx")
+new_PIB2017 <- PIB_capita
 new_PIB2017 <- new_PIB2017[-c(1), ]
 colnames(new_PIB2017)[1] <- country_code
 colnames(new_PIB2017)[2] <- c("X2015")
@@ -297,7 +182,6 @@ colnames(new_PIB2017)[4] <- c("X2017")
 colnames(new_PIB2017)[5] <- c("X2018")
 colnames(new_PIB2017)[6] <- c("X2019")
 colnames(new_PIB2017)[7] <- c("X2021")
-view(new_PIB2017)
 
 G_PIB2017 <- merge(new_PIB2017, PIB_capita_tri)
 
@@ -328,17 +212,13 @@ G_PIB2017 <- G_PIB2017[, -2]
 G_PIB2017 <- G_PIB2017[, -1]
 
 # Moyenne sur les 5 dernières années avec ces tx pour trouver le g en 2017 PPP
-
 G_PIB2017$g_moyen <-rowMeans(G_PIB2017)
-View(G_PIB2017)
 
 # calcul des projections de PIB de 2022 à 2030
 
 new_PIB2017bis <- merge(new_PIB2017,data_avgwelf, by=country_code)
-View(new_PIB2017bis)
 G_PIB2017_final <- cbind(new_PIB2017bis$country_code, new_PIB2017bis$X2021, G_PIB2017)
 colnames(G_PIB2017_final)[1:2] <- c("country_code","PIB_2021")
-View(G_PIB2017_final)
 
 G_PIB2017_final$PIB_2021 <- as.numeric(G_PIB2017_final$PIB_2021)
 G_PIB2017_final$PIBproj_2022 <- NA
@@ -359,9 +239,64 @@ G_PIB2017_final$PIBproj_2029 <- NA
 for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2029[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^2*(G_PIB2017_final$`PIBproj_2028`[i])
 G_PIB2017_final$PIBproj_2030 <- NA
 for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2030[i] <- ((G_PIB2017_final$`g_moyen`[i]/100)+1)^1*(G_PIB2017_final$`PIBproj_2029`[i])
-View(G_PIB2017_final)
 
+#A REFAIRE
+PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
+Merge_10 <- merge(PIB_capita_tri, PIB_pourcalcul, by="country_code")
+View(Merge_10)
+colnames(Merge_10)[4] <- c("X2021")
+Merge_10$Ratio_PIB <- NA
+for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
+colnames(Croissance_Pays3)[1] <- c("country_code")
+Merge_11 <- merge(Merge_10, Croissance_Pays3)
 
+Merge_11$Tx_Calage <- NA
+for(i in 1:length(Merge_11$`Ratio_PIB`)) for(j in 1:length(Merge_11$`Moyenne_croissance$RowMean`)) Merge_11$Tx_Calage[i] <- (Merge_11$`Ratio_PIB`[i]*(1+Merge_11$`Moyenne_croissance$RowMean`[j]/100)^9)
 
+#IL FAUT JUSTE  CHANGER MERGE_11
+data_calage <- merge( Merge_11, data_avgwelf)
+data_calage <- data_calage[-c(2:13)]
+calcul_calage <- data_calage
+calcul_calage[,3:101] <- calcul_calage[,3:101]*calcul_calage[,2]
+avgwelf_calage_of_p <- paste0("avgwelf_calage_of_p", 1:(ncol(calcul_calage)-2))
+colnames(calcul_calage)[3:102] <- avgwelf_calage_of_p
 
+#calculer pour chaque pays le "anti-poverty maximum"=le seuil à partir duquel il faut exproprier tous les revenus pour éradiquer la pauvreté au seuil de 2.15$ 
+#calculer le "anti-poverty tax", i.e. taux de taxation (au-delà de, disons, 6.85$) nécessaire pour combler le poverty gap
 
+#Peut on combler le poverty gap avec seulement des échanges internes?
+Anti_pov_gap_nv_seuil <- merge(Pov_gap, data_quantile)
+Anti_pov_gap_nv_seuil <- Anti_pov_gap_nv_seuil[-c(2:101)]
+Anti_pov_gap_avg_welf <- merge(Pov_gap, data_avgwelf)
+Anti_pov_gap_avg_welf <- Anti_pov_gap_avg_welf[-c(2:101)]
+Anti_pov_gap <- data.frame(country_code = Anti_pov_gap_nv_seuil$country_code, Pov_gap_nat = Anti_pov_gap_nv_seuil$Somme_pov_gap )
+Anti_pov_gap$funded <- 0
+funded <- Anti_pov_gap$funded
+i <- 102
+Anti_pov_gap$percentile_expropriated <- NA
+for (row in 1:nrow(Anti_pov_gap)) {
+  funded <- Anti_pov_gap[row, "funded"]
+  i <- 102
+  while (funded < Anti_pov_gap$Pov_gap_nat[row] && i >= 3) {
+    percentile_expropriated_seuil <- colnames(Anti_pov_gap_nv_seuil)[i-1]
+    percentile_expropriated_welf <- colnames(Anti_pov_gap_avg_welf)[i]
+    funded <- funded + Anti_pov_gap_avg_welf[row, percentile_expropriated_welf] - Anti_pov_gap_nv_seuil[row, percentile_expropriated_seuil]
+    i <- i - 1
+  }
+  if (i <= 3 || funded > Anti_pov_gap$Pov_gap_nat[row]) {
+    Anti_pov_gap$percentile_expropriated[row] <- as.numeric(gsub("avgwelf", "", percentile_expropriated_welf))
+    Anti_pov_gap[row, "funded"] <- funded
+  }
+}
+
+#Calcul de la base taxable
+exemption_threshold <- 7
+calcul_taxable_base <- function(avg_welfare, exemption_threshold) {
+  taxable_base <- sum(pmin(0, y - exemption_threshold))
+  return(taxable_base)
+}
+for (row in 1:nrow(Anti_pov_gap)) {
+  for (col in names(data_avgwelf)[-1]) {
+    calcul_taxable_base(data_avgwelf[col], exemption_threshold)
+  }
+}

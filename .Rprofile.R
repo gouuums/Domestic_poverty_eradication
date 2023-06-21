@@ -1,0 +1,12 @@
+install.packages("devtools")
+devtools::install_github("thomasblanchet/gpinter")
+library(gpinter)
+library(tidyverse)
+
+#Récup données perso (Elise)
+library(readr)
+data <- read.csv("C:/Users/elise/Documents/stage Cired/Domestic_poverty_eradication/Povcalnet 2017.csv")
+library(readxl)
+Croissance_pays <- read_excel("C:/Users/elise/Documents/stage Cired/Croissance pays.xls")
+library(readxl)
+PIB_capita <- read_excel("C:/Users/elise/Documents/stage Cired/PIB_capita.xls")
