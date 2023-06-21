@@ -5,7 +5,7 @@ library(readr)
 library(readxl)
 library(tidyverse)
 
-# install.packages("devtools")
+install.packages("devtools")
 # devtools::install_github("thomasblanchet/gpinter")
 library(gpinter)
 library(tidyverse)
@@ -243,7 +243,6 @@ for(i in 1:length(G_PIB2017_final$`g_moyen`)) G_PIB2017_final$PIBproj_2030[i] <-
 #A REFAIRE
 PIB_pourcalcul <- PIB_capita_non_tri[ , - c(2:33)]
 Merge_10 <- merge(PIB_capita_tri, PIB_pourcalcul, by="country_code")
-View(Merge_10)
 colnames(Merge_10)[4] <- c("X2021")
 Merge_10$Ratio_PIB <- NA
 for(i in 1:length(Merge_10$`PIB`)) for(j in 1:length(Merge_10$`X2021`)) Merge_10$Ratio_PIB[i] <- (Merge_10$`X2021`[i]/Merge_10$`PIB`[i])
@@ -291,12 +290,16 @@ for (row in 1:nrow(Anti_pov_gap)) {
 
 #Calcul de la base taxable
 exemption_threshold <- 7
+result_table <- data.frame(matrix(ncol = ncol(data_avgwelf), nrow = nrow(data_avgwelf)))
+result_table[, 1] <- data_avgwelf[, 1]
+
 calcul_taxable_base <- function(avg_welfare, exemption_threshold) {
-  taxable_base <- sum(pmin(0, y - exemption_threshold))
+  taxable_base <- sum(pmin(0, avg_welfare - exemption_threshold))
   return(taxable_base)
 }
-for (row in 1:nrow(Anti_pov_gap)) {
+
+for (row in 1:nrow(data_avgwelf)) {
   for (col in names(data_avgwelf)[-1]) {
-    calcul_taxable_base(data_avgwelf[col], exemption_threshold)
+    result_taxable_base[row, col] <- calcul_taxable_base(data_avgwelf[row, col], exemption_threshold)
   }
 }
