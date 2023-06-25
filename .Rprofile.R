@@ -36,7 +36,7 @@ package("knitr") # plot_crop, representativeness_table
 
 # install.packages("devtools")
 # devtools::install_github("thomasblanchet/gpinter")
-package("gpinter")
+# library(gpinter)
 
 
 # Functions

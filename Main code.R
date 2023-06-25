@@ -43,7 +43,7 @@ p$growth_gdp_pc_year_30[is.na(p$growth_gdp_pc_year_30)] <- 1 # TODO: improve thi
 for (i in 1:100) p[[paste0("y_avg_", i)]] <- p[[paste0("avg_welfare_", i)]] * p$growth_gdp_pc_year_30
 for (i in 1:100) p[[paste0("y_max_", i)]] <- p[[paste0("quantile_", i)]] * p$growth_gdp_pc_year_30
 for (i in 2:100) p[[paste0("y_min_", i)]] <- p[[paste0("quantile_", i-1)]] * p$growth_gdp_pc_year_30
-p$y_min_1 <- 0
+p$y_min_1 <- p$y_max_0 <- 0
 p$y_max_100[is.na(p$y_max_100)] <- p$y_avg_100[is.na(p$y_max_100)]
 p$mean_y <- rowMeans(p[,which(names(p)=="y_avg_1"):which(names(p)=="y_avg_100")])
 
@@ -56,9 +56,38 @@ pop_iso3 <- pop_iso3 %>% pivot_wider(names_from = Time, values_from = PopTotal)
 names(pop_iso3) <- c("country_code", paste0("pop_", names(pop_iso3)[-1]))
 p <- merge(p, pop_iso3)
 p$pop_year <- sapply(1:nrow(p), function(c) { p[[paste0("pop_", p$year[c])]][c] }) # in thousands
+# p.bak <- p
+# p <- p.bak
 
 # Manage CN, IA, ID rural/urban (/!\ in ARG, SUR, there is only urban as reporting_level)
-# TODO!
+pop_rurb <- read.csv2("data/pop_rural_urban.csv")
+for (c in c("CHN", "IDN", "IND")) {
+  u <- p$country_code == c & p$reporting_level == "urban"
+  r <- p$country_code == c & p$reporting_level == "rural"
+  frac_urb_2030 <- pop_rurb$yr_2030[pop_rurb$country_code == c & pop_rurb$reporting_level == "urban"]/pop_rurb$yr_2030[pop_rurb$reporting_level == "national" & pop_rurb$country_code == c]
+  for (v in names(p)[grepl("pop_share_", names(p))]) p[[v]][u] <- p[[v]][u] * frac_urb_2030
+  for (v in names(p)[grepl("pop_share_", names(p))]) p[[v]][r] <- p[[v]][r] * (1 - frac_urb_2030)
+  quantiles <- sort(unlist(sapply(1:100, function(i) {p[[paste0("y_max_", i)]][p$country_code == c] })))
+  cdf <- c()
+  for (q in quantiles) cdf <- c(cdf, sum(sapply(1:100, function(j) { (p[[paste0("y_max_", j)]][u] <= q) * p[[paste0("pop_share_", j)]][u] + (p[[paste0("y_max_", j)]][r] <= q) * p[[paste0("pop_share_", j)]][r] })))
+  percentiles <- findInterval(seq(0, 1, .01), cdf, left.open = T)[-1] # computes the indices for which the pop_share is lesser or equal to the percentiles.
+  new_line <- p[u, ] # TODO? Create new_line with all NAs instead?
+  new_line$reporting_level <- "national"
+  p <- rbind(p, new_line)
+  for (i in 1:100) {
+    p[[paste0("y_max_", i)]][p$country_code == c & p$reporting_level == "national"] <- quantiles[percentiles[i]]
+    if (i == 1) p$pop_share_1[p$country_code == c & p$reporting_level == "national"] <- cdf[percentiles[1]] 
+    else p[[paste0("pop_share_", i)]][p$country_code == c & p$reporting_level == "national"] <- cdf[percentiles[i]] - cdf[percentiles[i-1]]
+    p[[paste0("y_min_", i)]][p$country_code == c & p$reporting_level == "national"] <- p[[paste0("y_max_", i-1)]][p$country_code == c & p$reporting_level == "national"]
+    p[[paste0("y_avg_", i)]][p$country_code == c & p$reporting_level == "national"] <- (
+      sum(sapply(1:100, function(k) { p[[paste0("pop_share_", k)]][u] * p[[paste0("y_avg_", k)]][u] * (p[[paste0("y_max_", k)]][u] <= p[[paste0("y_max_", i)]][u]) * (p[[paste0("y_max_", k)]][u] > p[[paste0("y_max_", i-1)]][u]) })) +
+      sum(sapply(1:100,function(k){p[[paste0("pop_share_", k)]][r] * p[[paste0("y_avg_", k)]][r] * (p[[paste0("y_max_", k)]][r] <= p[[paste0("y_max_", i)]][r]) * (p[[paste0("y_max_", k)]][r] > p[[paste0("y_max_", i-1)]][r]) }))) / (
+        sum(sapply(1:100, function(k) { p[[paste0("pop_share_", k)]][u] * (p[[paste0("y_max_", k)]][u] <= p[[paste0("y_max_", i)]][u]) * (p[[paste0("y_max_", k)]][u] > p[[paste0("y_max_", i-1)]][u]) })) +
+        sum(sapply(1:100,function(k){p[[paste0("pop_share_", k)]][r] * (p[[paste0("y_max_", k)]][r] <= p[[paste0("y_max_", i)]][r]) * (p[[paste0("y_max_", k)]][r] > p[[paste0("y_max_", i-1)]][r]) })) )
+  }
+  p <- p[p$country_code != c | p$reporting_level == "national",]
+}
+
 
 # Add country name
 iso3 <- read.csv("data/country_iso3.csv")
