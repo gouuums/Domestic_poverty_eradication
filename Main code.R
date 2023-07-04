@@ -13,6 +13,7 @@
 # calculer Gini sans redistribution, et avec redistribution linéaire vs. expropriative => indicateur: réduction de Gini nécessaire pour éradiquer pauvreté.
 # autre indicateur: quel y minimum on peut assurer en expropriant tout au-delà de $13/day? $7?
 
+# Ajouter aux calculs la basic needs poverty line de Moatsos, cf. data https://clio-infra.eu/Indicators/GlobalExtremePovertyCostofBasicNeeds.html and https://clio-infra.eu/Indicators/GlobalExtremePovertyDollaraDay.html
 
 # Data fetch
 data <- read.csv("data/Povcalnet 2017.csv") # AF: faut toujours mettre des chemins de fichiers relatifs, pas absolu
