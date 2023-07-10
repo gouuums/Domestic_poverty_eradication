@@ -94,6 +94,20 @@ for (c in c("CHN", "IDN", "IND")) {
 iso3 <- read.csv("data/country_iso3.csv")
 iso3$country_code[!iso3$country_code %in% p$country_code] # TODO: many countries absent! AFG, CUB, LBY...
 p <- merge(p, iso3)
+p$country[p$country_code == "RUS"] <- "Russia"
+p$country[p$country_code == "BOL"] <- "Bolivia"
+p$country[p$country_code == "GUF"] <- "France"
+p$country[p$country_code == "IRN"] <- "Iran"
+p$country[p$country_code == "KOR"] <- "South Korea"
+p$country[p$country_code == "LAO"] <- "Laos"
+p$country[p$country_code == "MDA"] <- "Moldova"
+p$country[p$country_code == "PSE"] <- "Palestine"
+p$country[p$country_code == "SWZ"] <- "Swaziland"
+p$country[p$country_code == "SYR"] <- "Syria"
+p$country[p$country_code == "TZA"] <- "Tanzania"
+p$country[p$country_code == "VEN"] <- "Venezuela"
+p$country[p$country_code == "VNM"] <- "Vietnam"
+#Missing in PIP : Afghanistan, Brunei, Cuba, Erythrée, Guinée équatoriale, Cambodge, Kuwait, Lybie, Liechtenstein, Nouvelle Calédonie, Nouvelle Zélande, Oman, Puerto Rico, Qatar, Sahara Occidental, Arabie Saoudite, Singapore, Somalie, Taiwan
 countries_names <- setNames(p$country, p$country_code)
 
 # #Tableau de l'average welfare par percentile

@@ -157,6 +157,7 @@ plot_world_map <- function(var, condition = "", df = p, on_control = FALSE, save
   world_map <- world_map[world_map$region != "Antarctica",] #
   world_map <- world_map[!world_map$region %in% c("Antarctica", "American Samoa", "Micronesia", "Guam", "Niue", "Pitcairn Islands", "Cook Islands", "Tonga", "Kiribati", "Marshall Islands", "French Polynesia", "Fiji", "Samoa", "Wallis and Futuna", "Vanuatu"),]
   # world_map$region <- iso.alpha(world_map$region)
+  world_map$region[world_map$region %in% c("French Guiana", "New Caledonia")] <- "France"
   
   df_na <- data.frame(country_map = setdiff(world_map$region, df$country), mean = if (fill_na) breaks[2] else NA)
   df <- merge(df, df_na, all = T)
