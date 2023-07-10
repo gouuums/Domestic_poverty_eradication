@@ -398,9 +398,12 @@ compute_antipoverty_maximum <- function(df = p, threshold = 2.15, return = "y") 
 p$percentile_expropriated_2 <- compute_antipoverty_maximum(df = p, threshold = 2.15, return = "percentile")
 p$percentile_expropriated_4 <- compute_antipoverty_maximum(df = p, threshold = 3.65, return = "percentile")
 p$percentile_expropriated_7 <- compute_antipoverty_maximum(df = p, threshold = 6.85, return = "percentile")
+p$percentile_expropriated_13 <- compute_antipoverty_maximum(df = p, threshold = 13, return = "percentile")
+
 p$y_expropriated_2 <- compute_antipoverty_maximum(df = p, threshold = 2.15)
 p$y_expropriated_4 <- compute_antipoverty_maximum(df = p, threshold = 3.65)
 p$y_expropriated_7 <- compute_antipoverty_maximum(df = p, threshold = 6.85)
+p$y_expropriated_13 <- compute_antipoverty_maximum(df = p, threshold = 13)
 
 #Calcul de la base taxable
 # exemption_threshold <- 7
@@ -424,25 +427,33 @@ compute_antipoverty_tax <- function(df = p, exemption_threshold = 6.85, poverty_
   if (return == "base") return(df$taxable_base)
   else return(df$antipoverty_tax)
 }
+p$antipoverty_2_tax_13 <- compute_antipoverty_tax(df = p, exemption_threshold = 13, poverty_threshold = 2.15)
 p$antipoverty_2_tax_7 <- compute_antipoverty_tax(df = p, exemption_threshold = 6.85, poverty_threshold = 2.15)
 p$antipoverty_2_tax_4 <- compute_antipoverty_tax(df = p, exemption_threshold = 3.65, poverty_threshold = 2.15)
 p$antipoverty_2_tax_2 <- compute_antipoverty_tax(df = p, exemption_threshold = 2.15, poverty_threshold = 2.15)
 p$antipoverty_4_tax_7 <- compute_antipoverty_tax(df = p, exemption_threshold = 6.85, poverty_threshold = 3.65)
-p$antipoverty_7_tax_7 <- compute_antipoverty_tax(df = p, exemption_threshold = 6.85, poverty_threshold = 6.85)
+p$antipoverty_4_tax_13 <- compute_antipoverty_tax(df = p, exemption_threshold = 13, poverty_threshold = 3.65)
+p$antipoverty_7_tax_13 <- compute_antipoverty_tax(df = p, exemption_threshold = 13, poverty_threshold = 6.85)
+p$antipoverty_13_tax_13 <- compute_antipoverty_tax(df = p, exemption_threshold = 13, poverty_threshold = 13)
 
 # Results
 sort(setNames(p$poverty_gap_2, p$country))
 sort(setNames(p$antipoverty_2_tax_2, p$country))
 sort(setNames(p$y_expropriated_2, p$country), decreasing = T)
 sort(setNames(p$gdp_pc_2030/365, p$country), decreasing = T)
+decrit("antipoverty_2_tax_13")
 decrit("antipoverty_2_tax_7")
 decrit("antipoverty_2_tax_4")
 decrit("antipoverty_2_tax_2")
 decrit("antipoverty_4_tax_7")
-decrit("antipoverty_7_tax_7")
+decrit("antipoverty_4_tax_13")
+decrit("antipoverty_7_tax_13")
+decrit("antipoverty_13_tax_13")
 decrit("y_expropriated_2")
 decrit("y_expropriated_4")
 decrit("y_expropriated_7")
+decrit("y_expropriated_13")
+
 
 # /!\ PROBLEM: huge discrepancies between PovcalNet and GDP pc data, e.g. for MDG:
 p$mean_y[p$country == "Madagascar"]
@@ -459,6 +470,9 @@ plot_world_map("antipoverty_2_tax_7", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, I
 plot_world_map("antipoverty_2_tax_2", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, Inf),
                legend = "Linear tax rate\nabove $2.15/day\nrequired to lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
                save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .07, trim = T) 
+plot_world_map("antipoverty_2_tax_13", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, Inf),
+               legend = "Linear tax rate\nabove $13/day\nrequired to lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
+               save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .07, trim = T) 
 # plot_world_map("percentile_expropriated_2", breaks = c(-Inf, 0, 50, 90, 95, 99, 100), sep = " to ", end = "", strict_ineq_lower = T,
 #                legend = "Percentile above which\nall should be expropriated\nto lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
 #                save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .07, trim = T) 
@@ -471,3 +485,10 @@ plot_world_map("y_expropriated_2", breaks = c(0, 2.15, 4, 7, 13, 20, 40, 100, In
 plot_world_map("y_expropriated_7", breaks = c(0, 2.15, 4, 7, 13, 20, 40, 100, Inf), sep = " to ", end = "", strict_ineq_lower = T, # svg, pdf
                legend = "Daily income above\nwhich all should\nbe expropriated\nto lift all in the country\nabove $6.85/day\n(in $ 2017 PPP)", #fill_na = T, 
                save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T) 
+plot_world_map("y_expropriated_13", breaks = c(0, 2.15, 4, 7, 13, 20, 40, 100, Inf), sep = " to ", end = "", strict_ineq_lower = T, # svg, pdf
+               legend = "Daily income above\nwhich all should\nbe expropriated\nto lift all in the country\nabove $13/day\n(in $ 2017 PPP)", #fill_na = T, 
+               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T) 
+plot_world_map("poverty_gap_2", breaks = c(0, 2, 10, 20, 40, 60, 100), sep = " to ", end = "", strict_ineq_lower = FALSE, # svg, pdf
+               legend = "Poverty gap (in %)\n at $2.15/day\n(in $ 2017 PPP)", #fill_na = T, 
+               save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .05, trim = T) 
+
