@@ -16,6 +16,7 @@
 # Ajouter aux calculs la basic needs poverty line de Moatsos, cf. data https://clio-infra.eu/Indicators/GlobalExtremePovertyCostofBasicNeeds.html and https://clio-infra.eu/Indicators/GlobalExtremePovertyDollaraDay.html
 
 # Data fetch
+# PIP/PovcalNet data is *per capita* (without adjustment for household composition).
 data <- read.csv("data/Povcalnet 2017.csv") # AF: faut toujours mettre des chemins de fichiers relatifs, pas absolu
 # AF: il vaut mieux écrire le code en anglais pour qu'il puisse être compris par le monde entier
 # Croissance_pays <- read_excel("data/Croissance pays.xls") # AF: c'est pas dans le répertoire ! Faut mettre ces trucs dans un dossier /Data dans le répertoire github
