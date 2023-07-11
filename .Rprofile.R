@@ -145,7 +145,7 @@ Levels <- function(variable, data = p, miss = TRUE, numbers = FALSE, values = TR
 
 
 plot_world_map <- function(var, condition = "", df = p, on_control = FALSE, save = FALSE, continuous = FALSE, width = dev.size('px')[1], height = dev.size('px')[2], legend_x = .05, rev_color = FALSE,
-                           breaks = NULL, labels = NULL, legend = NULL, limits = NULL, fill_na = FALSE, format = "png", trim = T, sep = "% à ", end = "%", strict_ineq_lower = FALSE) {
+                           breaks = NULL, labels = NULL, legend = NULL, limits = NULL, fill_na = FALSE, format = "png", trim = T, sep = "% to ", end = "%", strict_ineq_lower = FALSE) {
   if (is.null(breaks)) breaks <- c(-Inf, seq(0, 1, .2), Inf)
   if (is.null(labels)) labels <- sub("≤", "<", sub("≥", ">", agg_thresholds(c(0), breaks, sep = sep, end = end, strict_ineq_lower = strict_ineq_lower, return = "levels")))
   if (is.null(limits)) limits <- c(-.01, 100.01)
