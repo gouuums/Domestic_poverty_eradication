@@ -1,6 +1,10 @@
 # AF: tout ce qui est avant consigne peut être mis dans un fichier nommé ".Rprofile" pour que les paquets se chargent à l'ouverture du projet.
 # AF: je ne vois aucune fonction dans votre code. Une bonne façon de coder c'est d'utiliser des fonctions (ma_fonction <- function(argument1) { ... } )
 
+# Docs:
+# En, 2p https://docs.google.com/document/d/12_JPK2F3Kj2CmRdMpL8hSPBPK-tImSLQc84Ordzz3tM/edit
+# Fr https://docs.google.com/document/d/1u41m1U0FGlvt6aGKzZET3MWr0ulz3tORPw1xVRSKek0/edit?usp=sharing
+
 #CONSIGNES
 # Pour tous pays récupérer la dernière année des donnéeSdispo 
 # estimer taux crissance  entre cette année kla et 2030 (cf tx croissance observée sur BM en $ 2017 PPP)
