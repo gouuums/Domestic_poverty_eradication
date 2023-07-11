@@ -18,6 +18,7 @@
 # autre indicateur: quel y minimum on peut assurer en expropriant tout au-delà de $13/day? $7?
 
 # Ajouter aux calculs la basic needs poverty line de Moatsos, cf. data https://clio-infra.eu/Indicators/GlobalExtremePovertyCostofBasicNeeds.html and https://clio-infra.eu/Indicators/GlobalExtremePovertyDollaraDay.html
+# Try first with Moatsos 21 (more recent estimates). If results are not satisfactory, use Moatsos 16 (better methodology).
 
 # Data fetch
 # PIP/PovcalNet data is *per capita* (without adjustment for household composition).
