@@ -465,14 +465,14 @@ p$gdp_pc_2030[p$country == "Madagascar"]/365 # GDP pc from World Bank
 
 # Maps
 plot_world_map("antipoverty_2_tax_7", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, Inf), 
-               # labels = sub("≤", "<", agg_thresholds(c(0), c(0, .1, 1, 5, 10, 25, 50, 100, Inf), sep = " to ", return = "levels")),
-               legend = "Linear tax rate\nabove $6.85/day\nrequired to lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
+               # labels = sub("≤", "<", agg_thresholds(c(0), c(0, .1, 1, 5, 10, 25, 50, 100, Inf), sep = "to", return = "levels")),
+               legend = "Taux de taxe linéaire \nau-dessus de $6.85/jour\nnécessaire pour éradiquer\nl'extrême pauvreté à $2.15/jour\n(en 2017 PPA)", #fill_na = T, 
                save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .07, trim = T) 
 plot_world_map("antipoverty_2_tax_2", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, Inf),
-               legend = "Linear tax rate\nabove $2.15/day\nrequired to lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
+               legend = "Taux de taxe linéaire \nau-dessus de $2.15/jour\nnécessaire pour éradiquer\nl'extrême pauvreté à $2.15/jour\n(en 2017 PPA)", #fill_na = T, 
                save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .07, trim = T) 
 plot_world_map("antipoverty_2_tax_13", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, Inf),
-               legend = "Linear tax rate\nabove $13/day\nrequired to lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
+               legend = "Taux de taxe linéaire\n au-dessus de $13/jour\nnécessaire pour éradiquer\nl'extrême pauvreté à $2.15/jour\n(en 2017 PPA)", #fill_na = T, 
                save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .07, trim = T) 
 # plot_world_map("percentile_expropriated_2", breaks = c(-Inf, 0, 50, 90, 95, 99, 100), sep = " to ", end = "", strict_ineq_lower = T,
 #                legend = "Percentile above which\nall should be expropriated\nto lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
@@ -481,15 +481,14 @@ plot_world_map("antipoverty_2_tax_13", breaks = c(0, .1, 1, 5, 10, 25, 50, 100, 
 #                legend = "Percentile above which\nall should be expropriated\nto lift all\nabove $2.15/day\n(in 2017 PPP)", #fill_na = T, 
 #                save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .07, trim = T) 
 plot_world_map("y_expropriated_2", breaks = c(0, 2.15, 4, 7, 13, 20, 40, 100, Inf), sep = " to ", end = "", strict_ineq_lower = T,
-               legend = "Daily income above\nwhich all should\nbe expropriated\nto lift all in the country\nabove $2.15/day\n(in $ 2017 PPP)", #fill_na = T, 
-               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T) 
+               legend = "Revenu journalier au\ndessus duquel tout devrait\nêtre exproprié pour élever \ntous les habitants du pays\nau-dessus de $2.15/jour\n(en $ 2017 PPA)", #fill_na = T,
+               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T)
 plot_world_map("y_expropriated_7", breaks = c(0, 2.15, 4, 7, 13, 20, 40, 100, Inf), sep = " to ", end = "", strict_ineq_lower = T, # svg, pdf
-               legend = "Daily income above\nwhich all should\nbe expropriated\nto lift all in the country\nabove $6.85/day\n(in $ 2017 PPP)", #fill_na = T, 
-               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T) 
+               legend = "Revenu journalier au\ndessus duquel tout devrait\nêtre exproprié pour élever \ntous les habitants du pays\nau-dessus de $6.85/jour\n(en $ 2017 PPA)", #fill_na = T,
+               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T)
 plot_world_map("y_expropriated_13", breaks = c(0, 2.15, 4, 7, 13, 20, 40, 100, Inf), sep = " to ", end = "", strict_ineq_lower = T, # svg, pdf
-               legend = "Daily income above\nwhich all should\nbe expropriated\nto lift all in the country\nabove $13/day\n(in $ 2017 PPP)", #fill_na = T, 
-               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T) 
+               legend = "Revenu journalier au\ndessus duquel tout devrait\nêtre exproprié pour élever \ntous les habitants du pays\nau-dessus de $13/jour\n(en $ 2017 PPA)", #fill_na = T,
+               save = T, rev_color = FALSE, format = c('png', 'pdf'), legend_x = .05, trim = T)
 plot_world_map("poverty_gap_2", breaks = c(0, 2, 10, 20, 40, 60, 100), sep = " to ", end = "", strict_ineq_lower = FALSE, # svg, pdf
-               legend = "Poverty gap (in %)\n at $2.15/day\n(in $ 2017 PPP)", #fill_na = T, 
-               save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .05, trim = T) 
-
+               legend = "Écart de pauvreté (en %)\nà $2.15/jour (en $ 2017 PPA)", #fill_na = T,
+               save = T, rev_color = T, format = c('png', 'pdf'), legend_x = .05, trim = T)
